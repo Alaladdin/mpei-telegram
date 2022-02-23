@@ -1,0 +1,30 @@
+{
+  "name": "mpei-telegram",
+  "version": "1.0.0",
+  "description": "MPEI telegram bot",
+  "main": "app.js",
+  "scripts": {
+    "start": "node -r esm app.js",
+    "dev": "nodemon -r esm app.js",
+    "deploy:setup": "pm2 deploy production setup",
+    "deploy:prod": "pm2 deploy ecosystem.config.js production --force"
+  },
+  "author": "Alaladdin",
+  "dependencies": {
+    "@sentry/node": "^6.17.9",
+    "@sentry/tracing": "^6.17.9",
+    "axios": "^0.26.0",
+    "dotenv": "^16.0.0",
+    "esm": "^3.2.25",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "node-schedule": "^2.1.0",
+    "telegraf": "^4.7.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.9.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4",
+    "nodemon": "^2.0.15"
+  }
+}
