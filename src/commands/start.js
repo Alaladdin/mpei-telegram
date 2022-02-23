@@ -4,7 +4,7 @@ import { phrases } from '../data';
 
 export default {
   name       : 'start',
-  description: 'Инициализация бота',
+  description: 'Обновление списка команд',
   execute(ctx) {
     const commandsInfo = getCommandsInfo();
     const commandsList = map(commandsInfo, ({ name, description }) => ({ command: name, description }));
