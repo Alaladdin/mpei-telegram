@@ -12,7 +12,7 @@ export default {
   ],
   async execute(ctx, args) {
     const scheduleInfo = this.getScheduleInfo(args[0]);
-    const schedule = await this.getSchedule(scheduleInfo.start, scheduleInfo.finish);
+    const schedule = await this.getSchedule(scheduleInfo);
 
     if (!schedule)
       return ctx.replyWithMarkdown('`Шо та пошло не так`');
@@ -28,15 +28,20 @@ export default {
   },
   getScheduleInfo(schedulePeriod) {
     const { scheduleInfo } = metadata;
+    const selectedSchedule = scheduleInfo[schedulePeriod] || scheduleInfo.default;
 
-    return scheduleInfo[schedulePeriod] || scheduleInfo.default;
+    return {
+      title : selectedSchedule.title,
+      start : selectedSchedule.getStartDate(),
+      finish: selectedSchedule.getFinishDate(),
+    };
   },
-  getSchedule: (start, finish) => axios.get(apiRequestsMap.getSchedule, { params: { start, finish } })
+  getSchedule: ({ start, finish }) => axios.get(apiRequestsMap.getSchedule, { params: { start, finish } })
     .then((res) => res.data.schedule)
     .catch((err) => {
       console.error(err);
 
-      throw err;
+      return null;
     }),
   getFormattedSchedule: (schedule) => {
     const formattedSchedules = map(schedule, (i) => {

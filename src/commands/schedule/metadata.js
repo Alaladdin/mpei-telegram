@@ -5,19 +5,19 @@ const getScheduleDate = (addDays = 0) => moment().add(addDays, 'days').format('Y
 export default {
   scheduleInfo: {
     week: {
-      title : 'Расписание на неделю',
-      start : getScheduleDate(),
-      finish: getScheduleDate(7),
+      title        : 'Расписание на неделю',
+      getStartDate : () => getScheduleDate(),
+      getFinishDate: () => getScheduleDate(7),
     },
     month: {
-      title : 'Расписание на месяц',
-      start : getScheduleDate(),
-      finish: getScheduleDate(30),
+      title        : 'Расписание на месяц',
+      getStartDate : () => getScheduleDate(),
+      getFinishDate: () => getScheduleDate(30),
     },
     default: {
-      title : 'Расписание на сегодня',
-      start : getScheduleDate(),
-      finish: getScheduleDate(),
+      title        : 'Расписание на сегодня',
+      getStartDate : () => getScheduleDate(),
+      getFinishDate: () => getScheduleDate(),
     },
   },
 };
