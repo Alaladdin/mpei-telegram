@@ -1,6 +1,5 @@
 import { map } from 'lodash';
-import { getCommandsInfo, getRandomArrayItem } from '../helpers';
-import { phrases } from '../data';
+import { getCommandsInfo } from '../helpers';
 
 export default {
   name       : 'start',
@@ -8,9 +7,8 @@ export default {
   execute(ctx) {
     const commandsInfo = getCommandsInfo();
     const commandsList = map(commandsInfo, ({ name, description }) => ({ command: name, description }));
-    const greeting = getRandomArrayItem(phrases.greetings);
 
     ctx.setMyCommands(commandsList);
-    ctx.replyWithMarkdown(greeting);
+    ctx.replyWithMarkdown('`Список команд обновлен`');
   },
 };
