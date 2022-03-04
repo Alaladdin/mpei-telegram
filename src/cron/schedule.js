@@ -11,7 +11,7 @@ export default {
         const formattedSchedule = scheduleCommand.formatSchedule(rawSchedule);
         const message = `\`${scheduleInfo.title}\n\n${formattedSchedule}\``;
 
-        await bot.telegram.sendMessage('398532631', message, { parse_mode: 'Markdown' });
+        await bot.telegram.sendMessage('-1001544093021', message, { parse_mode: 'Markdown' });
       }
     });
   },
