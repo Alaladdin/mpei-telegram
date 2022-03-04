@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { formatDate } from '../helpers';
-import { apiRequestsMap } from '../data';
+import config from '../../config';
+import request from '../plugins/request';
 
 export default {
   name       : 'a',
@@ -8,39 +8,44 @@ export default {
   arguments  : [{ name: 'lazy', description: 'несрочная' }],
   async execute(ctx, args) {
     const actuality = await this.getActuality();
-    const actualityInfo = this.getActualityInfo(actuality, args);
 
-    if (actualityInfo.text) {
-      const message = [actualityInfo.title, actualityInfo.text].join('\n\n');
+    if (!actuality.error) {
+      const actualityInfo = this.getActualityInfo(actuality, args);
 
-      return ctx.replyWithMarkdown(`\`${message}\``);
+      if (actualityInfo.text) {
+        const message = [actualityInfo.title, actualityInfo.text].join('\n\n');
+
+        return ctx.replyWithMarkdown(`\`${message}\``);
+      }
+
+      return ctx.replyWithMarkdown(`\`${actualityInfo.noDataTitle}\``);
     }
 
-    return ctx.replyWithMarkdown(`\`${actualityInfo.noDataTitle}\``);
+    return ctx.replyWithMarkdown(`\`Error: ${actuality.error}\``);
   },
   getActualityInfo(actuality, args) {
     const isLazy = args.includes('lazy');
-    const updatedAt = formatDate(actuality.updatedAt);
+    const { updatedAt, updatedBy, content, lazyContent } = actuality;
+    const formattedUpdatedAt = formatDate(updatedAt);
+    const updatedByText = (updatedBy && updatedBy.username) || 'DELETED USER';
+    const updatedText = `Обновлено ${formattedUpdatedAt} by ${updatedByText}`;
+
     const info = {
       main: {
-        title      : `Актуалочка. Обновлено: ${updatedAt}`,
+        title      : `Актуалочка. ${updatedText}`,
         noDataTitle: 'Актуалочка пуста',
-        text       : actuality.content,
+        text       : content,
       },
       lazy: {
-        title      : `Несрочная актуалочка. Обновлено: ${updatedAt}`,
+        title      : `Несрочная актуалочка. ${updatedText}`,
         noDataTitle: 'Несрочная актуалочка пуста',
-        text       : actuality.lazyContent,
+        text       : lazyContent,
       },
     };
 
     return isLazy ? info.lazy : info.main;
   },
-  getActuality: () => axios.get(apiRequestsMap.getActuality)
-    .then((res) => res.data.actuality)
-    .catch((err) => {
-      console.error(err);
-
-      throw err;
-    }),
+  getActuality: () => request.get(`${config.apiUrl}/getActuality`)
+    .then((data) => data.actuality)
+    .catch((err) => err),
 };

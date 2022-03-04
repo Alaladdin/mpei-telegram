@@ -1,7 +1,7 @@
-import axios from 'axios';
-import { map } from 'lodash';
-import { apiRequestsMap } from '../../data';
+import { map, memoize } from 'lodash';
 import metadata from './metadata';
+import request from '../../plugins/request';
+import config from '../../../config';
 
 export default {
   name       : 's',
@@ -14,11 +14,11 @@ export default {
     const scheduleInfo = this.getScheduleInfo(args[0]);
     const schedule = await this.getSchedule(scheduleInfo);
 
-    if (!schedule)
-      return ctx.replyWithMarkdown('`Шо та пошло не так`');
+    if (schedule.error)
+      return ctx.replyWithMarkdown(`\`Error: ${schedule.error}\``);
 
     if (schedule.length) {
-      const formattedSchedule = this.getFormattedSchedule(schedule);
+      const formattedSchedule = this.formatSchedule(schedule);
       const message = [scheduleInfo.title, formattedSchedule].join('\n\n');
 
       return ctx.replyWithMarkdown(`\`${message}\``);
@@ -36,14 +36,10 @@ export default {
       finish: selectedSchedule.getFinishDate(),
     };
   },
-  getSchedule: ({ start, finish }) => axios.get(apiRequestsMap.getSchedule, { params: { start, finish } })
-    .then((res) => res.data.schedule)
-    .catch((err) => {
-      console.error(err);
-
-      return null;
-    }),
-  getFormattedSchedule: (schedule) => {
+  getSchedule: ({ start, finish }) => request.get(`${config.apiUrl}/getSchedule`, { params: { start, finish } })
+    .then((data) => data.schedule)
+    .catch((err) => err),
+  formatSchedule: memoize((schedule) => {
     const formattedSchedules = map(schedule, (i) => {
       const lesson = [];
 
@@ -51,7 +47,7 @@ export default {
       lesson.push(`Тип: ${i.kindOfWork}`);
 
       if (i.beginLesson !== '18:55')
-        lesson.push(`Время: ${i.beginLesson} -  ${i.endLesson}`);
+        lesson.push(`Время: ${i.beginLesson} - ${i.endLesson}`);
 
       if (i.building !== '-')
         lesson.push(`Кабинет: ${i.auditorium} (${i.building})`);
@@ -63,5 +59,5 @@ export default {
     });
 
     return formattedSchedules.join('\n\n');
-  },
+  }),
 };
