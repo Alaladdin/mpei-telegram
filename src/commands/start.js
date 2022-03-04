@@ -7,8 +7,9 @@ export default {
   execute(ctx) {
     const commandsInfo = getCommandsInfo();
     const commandsList = map(commandsInfo, ({ name, description }) => ({ command: name, description }));
+    const { first_name: username } = ctx.update.message.from;
 
     ctx.setMyCommands(commandsList);
-    ctx.replyWithMarkdown('`Список команд обновлен`');
+    ctx.replyWithMarkdown(`\`Приветствую, ${username}\``);
   },
 };
