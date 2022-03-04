@@ -4,7 +4,7 @@ import { getCommandsInfo } from '../helpers';
 export default {
   name       : 'help',
   description: 'Информация по командам',
-  execute(ctx) {
+  async execute(ctx) {
     const commandsInfo = getCommandsInfo();
     const commandsInfoText = map(commandsInfo, (commandInfo) => {
       const { name, description, arguments: args } = commandInfo;
