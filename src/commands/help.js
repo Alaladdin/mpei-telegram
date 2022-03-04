@@ -22,6 +22,6 @@ export default {
       return info.join('\n');
     }).join('\n\n');
 
-    ctx.replyWithMarkdown(`\`${commandsInfoText}\``);
+    await ctx.replyWithMarkdown(`\`${commandsInfoText}\``);
   },
 };

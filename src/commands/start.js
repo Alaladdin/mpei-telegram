@@ -10,6 +10,6 @@ export default {
     const { first_name: username } = ctx.update.message.from;
 
     ctx.setMyCommands(commandsList);
-    ctx.replyWithMarkdown(`\`Приветствую, ${username}\``);
+    await ctx.replyWithMarkdown(`\`Приветствую, ${username}\``);
   },
 };

@@ -4,8 +4,8 @@ import config from '../../config';
 
 const baseHeaders = { authToken: config.authToken };
 const handleError = (err) => {
-  const { response, code: errorCode } = err;
-  const errorData = (response && response.data) || { error: errorCode };
+  const { response: res, code: errorCode } = err;
+  const errorData = (res && res.data) || { error: errorCode };
 
   console.error(errorData.error);
 
