@@ -1,6 +1,6 @@
 {
   "name": "mpei-telegram",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "MPEI telegram bot",
   "main": "app.js",
   "scripts": {
@@ -9,6 +9,15 @@
     "deploy:setup": "pm2 deploy production setup",
     "deploy:prod": "pm2 deploy ecosystem.config.js production --force"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alaladdin/mpei-telegram.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Alaladdin/mpei-telegram/issues"
+  },
+  "homepage": "https://github.com/Alaladdin/mpei-telegram#readme",
   "author": "Alaladdin",
   "dependencies": {
     "@sentry/node": "^6.17.9",

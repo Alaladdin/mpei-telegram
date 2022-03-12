@@ -9,7 +9,7 @@ export default {
     const commandsList = map(commandsInfo, ({ name, description }) => ({ command: name, description }));
     const { first_name: username } = ctx.update.message.from;
 
-    ctx.setMyCommands(commandsList);
+    await ctx.setMyCommands(commandsList);
     await ctx.replyWithMarkdown(`\`Приветствую, ${username}\``);
   },
 };

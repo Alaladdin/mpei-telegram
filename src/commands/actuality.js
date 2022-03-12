@@ -13,7 +13,7 @@ export default {
       const actualityInfo = this.getActualityInfo(actuality, args);
 
       if (actualityInfo.text) {
-        const message = [actualityInfo.title, actualityInfo.text].join('\n\n');
+        const message = [`*${actualityInfo.title}*`, actualityInfo.text].join('\n\n');
 
         return ctx.replyWithMarkdown(message);
       }
