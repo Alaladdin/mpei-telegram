@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-const getScheduleDate = (addDays = 0) => moment().add(addDays, 'days').format('YYYY.MM.DD');
+export const getScheduleDate = (addDays = 0) => moment().add(addDays, 'days').format('YYYY.MM.DD');
 
 export default {
   scheduleInfo: {

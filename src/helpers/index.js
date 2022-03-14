@@ -18,3 +18,4 @@ export const getCommandsInfo = memoize(() => {
 /* eslint-enable no-param-reassign,global-require,import/no-dynamic-require */
 
 export const formatDate = (date, format = 'DD.MM') => moment(date).format(format);
+export const getDateDiff = (startDate, endDate) => moment.duration(endDate.diff(startDate));
