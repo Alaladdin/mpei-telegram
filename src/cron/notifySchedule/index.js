@@ -25,7 +25,7 @@ export default {
 
         nodeSchedule.cancelJob(this.currentScheduleJob);
 
-        if (diffMinutes >= 0 && diffMinutes <= notifyBeforeLessonInMinutes)
+        if (diffMinutes + notifyBeforeLessonInMinutes >= 0 && diffMinutes <= notifyBeforeLessonInMinutes)
           await this.sendSchedule(bot);
         else
           this.currentScheduleJob = nodeSchedule.scheduleJob(lessonDate, () => this.sendSchedule(bot));
