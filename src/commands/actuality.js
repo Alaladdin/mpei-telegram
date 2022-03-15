@@ -15,7 +15,7 @@ export default {
       if (actualityInfo.text) {
         const message = [`*${actualityInfo.title}*`, actualityInfo.text].join('\n\n');
 
-        return ctx.replyWithMarkdown(message);
+        return ctx.replyWithMarkdown(message, { disable_web_page_preview: true });
       }
 
       return ctx.replyWithMarkdown(`\`${actualityInfo.noDataTitle}\``);
