@@ -2,7 +2,6 @@ import { Telegraf } from 'telegraf';
 import { contextMiddleware } from './src/middleware';
 import config from './config';
 import commands from './src/commands';
-import actions from './src/actions';
 import cron from './src/cron';
 import { initStore } from './src/store';
 
@@ -16,7 +15,6 @@ bot.use(async (ctx, next) => {
 bot.launch()
   .then(initStore)
   .then(() => {
-    actions.init(bot);
     commands.init(bot);
     cron.init(bot);
     console.info('[BOT] has been started');
