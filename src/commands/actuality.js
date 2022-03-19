@@ -27,7 +27,8 @@ export default {
     const isLazy = args.includes('lazy');
     const { updatedAt, updatedBy, content, lazyContent } = actuality;
     const formattedUpdatedAt = formatDate(updatedAt);
-    const updatedByText = (updatedBy && updatedBy.username) || 'DELETED USER';
+    const updatedByUsername = updatedBy && (updatedBy.displayName || updatedBy.username);
+    const updatedByText = updatedByUsername || 'DELETED USER';
     const updatedText = `Обновлено ${formattedUpdatedAt} by ${updatedByText}`;
 
     const info = {
