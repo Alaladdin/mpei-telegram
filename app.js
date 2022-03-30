@@ -16,6 +16,8 @@ bot.use(async (ctx, next) => {
 
   const transaction = Sentry.startTransaction({ op: ctx.sentryOpearation, name: ctx.sentryName });
 
+  Sentry.setUser({ username: ctx.username, isAdmin: ctx.isAdmin });
+
   next()
     .catch(Sentry.captureException)
     .finally(() => transaction.finish());
