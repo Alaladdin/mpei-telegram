@@ -2,7 +2,7 @@ import { Markup } from 'telegraf';
 
 export default {
   name       : 'ss',
-  actionName : 'subscribeSchedule',
+  actionNames: ['subscribeSchedule'],
   description: 'Уведомления перед парой',
   async execute(ctx) {
     const messageData = this.getMessageData(ctx);

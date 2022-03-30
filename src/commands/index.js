@@ -5,14 +5,16 @@ import { getCommandsInfo } from '../helpers';
 export default {
   init(bot) {
     const commandsInfo = getCommandsInfo();
-    const actions = filter(commandsInfo, (command) => command.actionName);
+    const actions = filter(commandsInfo, 'actionNames');
 
     each(commandsInfo, (command) => {
       bot.command(command.name, (ctx) => this.callCommand(command, ctx));
     });
 
     each(actions, (action) => {
-      bot.action(action.actionName, (ctx) => action.executeAction(ctx));
+      each(action.actionNames, (actionName) => {
+        bot.action(actionName, (ctx) => action.executeAction(ctx));
+      });
     });
   },
   callCommand(command, ctx) {

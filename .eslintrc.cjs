@@ -10,6 +10,7 @@ module.exports = {
   extends      : ['airbnb-base'],
   parserOptions: { ecmaVersion: 12 },
   rules        : {
+    'func-names'                      : 0,
     'import/prefer-default-export'    : 0,
     'no-underscore-dangle'            : 0,
     'no-console'                      : process.env.NODE_ENV === 'production' ? 'warn' : 'off',

@@ -1,40 +1,51 @@
-import { map, memoize } from 'lodash';
-import metadata from './metadata';
+import { map, memoize, debounce } from 'lodash';
+import { Markup } from 'telegraf';
+import { formatDate, getScheduleDate } from '../../helpers';
 import request from '../../plugins/request';
 import config from '../../../config';
+
+const keyboard = Markup.inlineKeyboard([
+  Markup.button.callback('сюдым', 'schedulePrevWeek'),
+  Markup.button.callback('тудым', 'scheduleNextWeek'),
+]);
 
 export default {
   name       : 's',
   description: 'Расписание',
-  arguments  : [
-    { name: 'week', description: 'на неделю' },
-    { name: 'month', description: 'на месяц' },
-  ],
-  async execute(ctx, args) {
-    const scheduleInfo = this.getScheduleInfo(args[0]);
-    const schedule = await this.getSchedule(scheduleInfo);
+  actionNames: ['schedulePrevWeek', 'scheduleNextWeek'],
+  offset     : 0,
+  async execute(ctx) {
+    this.offset = 0;
 
-    if (schedule.error)
-      return ctx.replyWithMarkdown(`\`Error: ${schedule.error}\``);
+    return this.sendSchedule(ctx);
+  },
+  executeAction: debounce(async function (ctx) {
+    const actionName = ctx.update.callback_query.data;
 
-    if (schedule.length) {
-      const formattedSchedule = this.formatSchedule(schedule);
-      const message = [scheduleInfo.title, formattedSchedule].join('\n\n');
+    this.offset += actionName === 'schedulePrevWeek' ? -7 : 7;
 
-      return ctx.replyWithMarkdown(`\`${message}\``);
+    return this.sendSchedule(ctx, true).finally(() => ctx.answerCbQuery());
+  }, 500, { leading: true }),
+  async sendSchedule(ctx, isEdit = false) {
+    const start = getScheduleDate(this.offset);
+    const finish = getScheduleDate(this.offset + 7);
+    const schedule = await this.getSchedule({ start, finish });
+
+    if (!schedule.error) {
+      const title = `Период: ${formatDate(new Date(start))} — ${formatDate(new Date(finish))}`;
+      const message = schedule.length ? this.formatSchedule(schedule) : 'Занятий нет. Ликуйте же';
+      const fullMessage = `${title}\n\n${message}`;
+
+      if (!isEdit)
+        return ctx.replyWithMarkdown(`\`${fullMessage}\``, keyboard);
+
+      return ctx.editMessageText(`\`${fullMessage}\``, { parse_mode: 'Markdown', ...keyboard })
+        .catch(() => {});
     }
 
-    return ctx.replyWithMarkdown('`Занятий нет. Ликуйте же`');
-  },
-  getScheduleInfo(schedulePeriod) {
-    const { scheduleInfo } = metadata;
-    const selectedSchedule = scheduleInfo[schedulePeriod] || scheduleInfo.default;
+    await ctx.replyWithMarkdown(`\`Error: ${schedule.error}\``);
 
-    return {
-      title : selectedSchedule.title,
-      start : selectedSchedule.getStartDate(),
-      finish: selectedSchedule.getFinishDate(),
-    };
+    throw schedule.error;
   },
   getSchedule: ({ start, finish }) => request.get(`${config.apiUrl}/getSchedule`, { params: { start, finish } })
     .then((data) => data.schedule)
