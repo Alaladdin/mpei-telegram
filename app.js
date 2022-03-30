@@ -1,3 +1,5 @@
+import '@sentry/tracing';
+import * as Sentry from '@sentry/node';
 import { Telegraf } from 'telegraf';
 import { contextMiddleware } from './src/middleware';
 import config from './config';
@@ -7,9 +9,16 @@ import { initStore } from './src/store';
 
 const bot = new Telegraf(config.token);
 
+Sentry.init({ dsn: config.sentryDsn, tracesSampleRate: 1.0, environment: config.currentEnv });
+
 bot.use(async (ctx, next) => {
   await contextMiddleware(ctx);
-  await next();
+
+  const transaction = Sentry.startTransaction({ op: ctx.sentryOpearation, name: ctx.sentryName });
+
+  next()
+    .catch(Sentry.captureException)
+    .finally(() => transaction.finish());
 });
 
 bot.launch()
