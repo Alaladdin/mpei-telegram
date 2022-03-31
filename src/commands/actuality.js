@@ -16,7 +16,8 @@ export default {
   async executeAction(ctx) {
     this.actualityType = this.actualityType === 'content' ? 'lazyContent' : 'content';
 
-    return this.sendActuality(ctx, true);
+    return this.sendActuality(ctx, true)
+      .finally(() => ctx.answerCbQuery());
   },
   async sendActuality(ctx, isEdit = false) {
     const actuality = await this.getActuality();

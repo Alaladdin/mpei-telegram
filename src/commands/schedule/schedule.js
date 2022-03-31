@@ -24,7 +24,8 @@ export default {
 
     this.offset += actionName === 'schedulePrevWeek' ? -7 : 7;
 
-    return this.sendSchedule(ctx, true).finally(() => ctx.answerCbQuery());
+    return this.sendSchedule(ctx, true)
+      .finally(() => ctx.answerCbQuery());
   }, 500, { leading: true }),
   async sendSchedule(ctx, isEdit = false) {
     const start = getScheduleDate(this.offset);
