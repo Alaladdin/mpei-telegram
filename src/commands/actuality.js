@@ -27,10 +27,9 @@ export default {
       const replyOptions = this.getReplyOptionsKeyboard();
 
       if (!isEdit)
-        return ctx.reply(message, replyOptions);
+        return ctx.reply(message, replyOptions).catch((err) => ctx.replyWithMarkdown(`\`${err}\``));
 
-      return ctx.editMessageText(message, replyOptions)
-        .catch((err) => ctx.replyWithMarkdown(`\`${err}\``));
+      return ctx.editMessageText(message, replyOptions).catch(() => {});
     }
 
     return ctx.replyWithMarkdown(`\`Error: ${actuality.error}\``);
