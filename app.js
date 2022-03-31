@@ -9,18 +9,29 @@ import { initStore } from './src/store';
 
 const bot = new Telegraf(config.token);
 
-Sentry.init({ dsn: config.sentryDsn, tracesSampleRate: 1.0, environment: config.currentEnv });
+if (config.isProd)
+  Sentry.init({ dsn: config.sentryDsn, tracesSampleRate: 1.0, environment: config.currentEnv });
 
 bot.use(async (ctx, next) => {
   await contextMiddleware(ctx);
 
-  const transaction = Sentry.startTransaction({ op: ctx.sentryOpearation, name: ctx.sentryName });
+  if (config.isProd) {
+    const transaction = Sentry.startTransaction({ op: ctx.sentryOpearation, name: ctx.sentryName });
 
-  Sentry.setUser({ username: ctx.username, isAdmin: ctx.isAdmin });
+    Sentry.setUser({
+      username     : ctx.username,
+      chatId       : ctx.chatId,
+      userId       : ctx.userId,
+      isAdmin      : ctx.isAdmin,
+      isPrivateChat: ctx.isPrivateChat,
+    });
 
-  next()
-    .catch(Sentry.captureException)
-    .finally(() => transaction.finish());
+    next()
+      .catch(Sentry.captureException)
+      .finally(() => transaction.finish());
+  } else {
+    await next();
+  }
 });
 
 bot.launch()
