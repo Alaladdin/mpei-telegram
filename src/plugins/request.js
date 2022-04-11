@@ -1,6 +1,6 @@
 import axios from 'axios';
 import merge from 'lodash/merge';
-import config from '../../config';
+import config from '../config';
 
 const baseHeaders = { authToken: config.authToken };
 const handleError = (err) => {

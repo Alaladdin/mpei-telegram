@@ -2,7 +2,7 @@ import { map, memoize, debounce } from 'lodash';
 import { Markup } from 'telegraf';
 import { formatDate, getScheduleDate } from '../../helpers';
 import request from '../../plugins/request';
-import config from '../../../config';
+import config from '../../config';
 
 const keyboard = Markup.inlineKeyboard([
   Markup.button.callback('сюдым', 'schedulePrevWeek'),
@@ -49,8 +49,7 @@ export default {
     throw schedule.error;
   },
   getSchedule: ({ start, finish }) => request.get(`${config.apiUrl}/getSchedule`, { params: { start, finish } })
-    .then((data) => data.schedule)
-    .catch((err) => err),
+    .then((data) => data.schedule),
   formatSchedule: memoize((schedule) => {
     const formattedSchedules = map(schedule, (i) => {
       const lesson = [];

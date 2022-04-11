@@ -2,9 +2,9 @@ import '@sentry/tracing';
 import * as Sentry from '@sentry/node';
 import { Telegraf } from 'telegraf';
 import { contextMiddleware } from './src/middleware';
-import config from './config';
+import config from './src/config';
 import commands from './src/commands';
-// import cron from './src/cron';
+import cron from './src/cron';
 import { initStore } from './src/store';
 
 const bot = new Telegraf(config.token);
@@ -38,7 +38,7 @@ bot.launch()
   .then(initStore)
   .then(() => {
     commands.init(bot);
-    // cron.init(bot);
+    cron.init(bot);
     console.info('[BOT] has been started');
   })
   .catch((err) => {

@@ -11,4 +11,5 @@ export default {
   authToken : process.env.AUTH_TOKEN,
   apiUrl    : process.env.API_URL,
   sentryDsn : process.env.SENTRY_DSN,
+  mainChat  : isProd ? '1001544093021' : '398532631',
 };

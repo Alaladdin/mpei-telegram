@@ -1,17 +1,19 @@
 import nodeSchedule from 'node-schedule';
 import scheduleCommand from '../commands/schedule';
+import { getScheduleDate } from '../helpers';
+import config from '../config';
 
 export default {
-  init(bot) {
+  async init(bot) {
     nodeSchedule.scheduleJob('0 0 9 * * *', async () => {
-      const scheduleInfo = scheduleCommand.getScheduleInfo();
-      const rawSchedule = await scheduleCommand.getSchedule(scheduleInfo);
+      const today = getScheduleDate();
+      const rawSchedule = await scheduleCommand.getSchedule({ start: today, finish: today });
 
       if (rawSchedule && rawSchedule.length) {
         const formattedSchedule = scheduleCommand.formatSchedule(rawSchedule);
-        const message = `\`${scheduleInfo.title}\n\n${formattedSchedule}\``;
+        const message = ['Расписание на сегодня', formattedSchedule].join('\n\n');
 
-        await bot.telegram.sendMessage('-1001544093021', message, { parse_mode: 'Markdown' });
+        await bot.telegram.sendMessage(config.mainChat, `\`${message}\``, { parse_mode: 'Markdown' });
       }
     });
   },

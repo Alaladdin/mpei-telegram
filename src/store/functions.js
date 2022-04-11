@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import request from '../plugins/request';
-import config from '../../config';
+import config from '../config';
 
 export const loadRemoteStore = () => request
   .get(`${config.apiUrl}/tg/getStore`)

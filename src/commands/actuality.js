@@ -1,7 +1,7 @@
 import { Markup } from 'telegraf';
 import { debounce } from 'lodash';
 import { formatDate } from '../helpers';
-import config from '../../config';
+import config from '../config';
 import request from '../plugins/request';
 
 export default {
