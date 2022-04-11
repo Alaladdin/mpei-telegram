@@ -7,9 +7,8 @@ export default {
   async execute(ctx) {
     const commandsInfo = getCommandsInfo();
     const commandsList = map(commandsInfo, ({ name, description }) => ({ command: name, description }));
-    const { first_name: username } = ctx.update.message.from;
 
     await ctx.setMyCommands(commandsList);
-    await ctx.replyWithMarkdown(`\`Приветствую, ${username}\``);
+    await ctx.replyWithMarkdown(`\`Приветствую, ${ctx.username}\``);
   },
 };

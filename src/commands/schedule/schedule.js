@@ -49,7 +49,8 @@ export default {
     throw schedule.error;
   },
   getSchedule: ({ start, finish }) => request.get(`${config.apiUrl}/getSchedule`, { params: { start, finish } })
-    .then((data) => data.schedule),
+    .then((data) => data.schedule)
+    .catch((err) => err),
   formatSchedule: memoize((schedule) => {
     const formattedSchedules = map(schedule, (i) => {
       const lesson = [];

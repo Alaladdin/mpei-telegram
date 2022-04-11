@@ -44,7 +44,6 @@ export default {
     const formattedUpdatedAt = formatDate(updatedAt);
     const updater = updatedBy ? (updatedBy.displayName || updatedBy.username) : 'DELETED USER';
     const updatedText = `Обновлено ${formattedUpdatedAt} by ${updater}`;
-
     const info = {
       main: { title: `Актуалочка. ${updatedText}`, data: content },
       lazy: { title: `Несрочная актуалочка. ${updatedText}`, data: lazyContent },
@@ -56,6 +55,6 @@ export default {
     const buttonText = this.actualityType === 'content' ? 'Несрочная' : 'Основная';
     const keyboard = Markup.inlineKeyboard([Markup.button.callback(buttonText, 'toggleActualityType')]);
 
-    return { parse_mode: 'Markdown', disable_web_page_preview: true, ...keyboard };
+    return { ...keyboard, parse_mode: 'Markdown', disable_web_page_preview: true };
   },
 };

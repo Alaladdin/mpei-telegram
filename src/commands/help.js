@@ -7,17 +7,11 @@ export default {
   async execute(ctx) {
     const commandsInfo = getCommandsInfo();
     const commandsInfoText = map(commandsInfo, (commandInfo) => {
-      const { name, description, arguments: args } = commandInfo;
+      const { name, description } = commandInfo;
       const info = [];
 
       info.push(`Команда: /${name}`);
       info.push(`Описание: ${description}`);
-
-      if (args) {
-        const argumentsText = map(args, (arg) => `- ${arg.name}: ${arg.description}`).join('\n');
-
-        info.push(`Аргументы:\n${argumentsText}`);
-      }
 
       return info.join('\n');
     }).join('\n\n');

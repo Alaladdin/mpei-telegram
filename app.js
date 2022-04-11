@@ -5,7 +5,6 @@ import { contextMiddleware } from './src/middleware';
 import config from './src/config';
 import commands from './src/commands';
 import cron from './src/cron';
-import { initStore } from './src/store';
 
 const bot = new Telegraf(config.token);
 
@@ -35,7 +34,6 @@ bot.use(async (ctx, next) => {
 });
 
 bot.launch()
-  .then(initStore)
   .then(() => {
     commands.init(bot);
     cron.init(bot);
