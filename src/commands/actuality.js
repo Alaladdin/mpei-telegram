@@ -1,5 +1,4 @@
 import { Markup } from 'telegraf';
-import { debounce } from 'lodash';
 import { formatDate } from '../helpers';
 import config from '../config';
 import request from '../plugins/request';
@@ -14,12 +13,12 @@ export default {
 
     return this.sendActuality(ctx);
   },
-  executeAction: debounce(async function (ctx) {
+  async executeAction(ctx) {
     this.actualityType = this.actualityType === 'content' ? 'lazyContent' : 'content';
 
     return this.sendActuality(ctx, true)
       .finally(() => ctx.answerCbQuery());
-  }, 500, { leading: true }),
+  },
   async sendActuality(ctx, isEdit = false) {
     const actuality = await this.getActuality();
 

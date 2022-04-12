@@ -1,4 +1,4 @@
-import { map, memoize, debounce } from 'lodash';
+import { map, memoize } from 'lodash';
 import { Markup } from 'telegraf';
 import { formatDate, getScheduleDate } from '../../helpers';
 import request from '../../plugins/request';
@@ -19,14 +19,14 @@ export default {
 
     return this.sendSchedule(ctx);
   },
-  executeAction: debounce(async function (ctx) {
+  async executeAction(ctx) {
     const actionName = ctx.update.callback_query.data;
 
     this.offset += actionName === 'schedulePrevWeek' ? -7 : 7;
 
     return this.sendSchedule(ctx, true)
       .finally(() => ctx.answerCbQuery());
-  }, 500, { leading: true }),
+  },
   async sendSchedule(ctx, isEdit = false) {
     const start = getScheduleDate(this.offset);
     const finish = getScheduleDate(this.offset + 7);
@@ -35,12 +35,12 @@ export default {
     if (!schedule.error) {
       const title = `Период: ${formatDate(new Date(start))} — ${formatDate(new Date(finish))}`;
       const message = schedule.length ? this.formatSchedule(schedule) : 'Занятий нет. Ликуйте же';
-      const fullMessage = `${title}\n\n${message}`;
+      const fullMessage = `*${title}*\n\n\`${message}\``;
 
       if (!isEdit)
-        return ctx.replyWithMarkdown(`\`${fullMessage}\``, keyboard);
+        return ctx.replyWithMarkdown(fullMessage, keyboard);
 
-      return ctx.editMessageText(`\`${fullMessage}\``, { parse_mode: 'Markdown', ...keyboard })
+      return ctx.editMessageText(fullMessage, { parse_mode: 'Markdown', ...keyboard })
         .catch(() => {});
     }
 
