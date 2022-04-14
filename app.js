@@ -15,7 +15,7 @@ bot.use(async (ctx, next) => {
   await contextMiddleware(ctx);
 
   if (config.isProd) {
-    const transaction = Sentry.startTransaction({ op: ctx.sentryOpearation, name: ctx.sentryName });
+    const transaction = Sentry.startTransaction({ op: ctx.sentryOperation, name: ctx.sentryName });
 
     Sentry.setUser({
       username     : ctx.username,
