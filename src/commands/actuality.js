@@ -9,11 +9,14 @@ export default {
   actionNames  : ['toggleActualityType'],
   actualityType: 'content',
   async execute(ctx) {
+    return ctx.replyWithMarkdown('`Актуалочка временно отключена`');
     this.actualityType = 'content';
 
     return this.sendActuality(ctx);
   },
   async executeAction(ctx) {
+    return ctx.replyWithMarkdown('`Актуалочка временно отключена`');
+
     this.actualityType = this.actualityType === 'content' ? 'lazyContent' : 'content';
 
     return this.sendActuality(ctx, true)
