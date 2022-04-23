@@ -7,6 +7,7 @@ module.exports = {
   extends      : ['airbnb-base'],
   parserOptions: { ecmaVersion: 12 },
   rules        : {
+    'prefer-destructuring'            : 0,
     'func-names'                      : 0,
     'import/prefer-default-export'    : 0,
     'no-underscore-dangle'            : 0,

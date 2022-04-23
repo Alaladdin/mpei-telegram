@@ -1,10 +1,10 @@
 import each from 'lodash/each';
 import { filter } from 'lodash';
-import { getCommandsInfo } from '../helpers';
+import { getFolderModulesInfo } from '../helpers';
 
 export default {
   init(bot) {
-    const commandsInfo = getCommandsInfo();
+    const commandsInfo = getFolderModulesInfo('commands');
     const actions = filter(commandsInfo, 'actionNames');
 
     each(commandsInfo, (command) => {

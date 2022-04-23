@@ -4,8 +4,8 @@ import moment from 'moment';
 import { filter, map, memoize } from 'lodash';
 
 /* eslint-disable no-param-reassign,global-require,import/no-dynamic-require */
-export const getCommandsInfo = memoize(() => {
-  const commandsFolder = path.resolve(__dirname, '../commands');
+export const getFolderModulesInfo = memoize((folderName) => {
+  const commandsFolder = path.resolve(__dirname, `../${folderName}`);
   const commandsFolderData = fs.readdirSync(commandsFolder);
   const commandsList = filter(commandsFolderData, (itemName) => itemName !== 'index.js');
 

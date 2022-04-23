@@ -1,11 +1,11 @@
 import { map } from 'lodash';
-import { getCommandsInfo } from '../helpers';
+import { getFolderModulesInfo } from '../helpers';
 
 export default {
   name       : 'help',
   description: 'Информация по командам',
   async execute(ctx) {
-    const commandsInfo = getCommandsInfo();
+    const commandsInfo = getFolderModulesInfo('commands');
     const commandsInfoText = map(commandsInfo, (commandInfo) => {
       const { name, description } = commandInfo;
       const info = [];
