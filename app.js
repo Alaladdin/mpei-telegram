@@ -1,16 +1,20 @@
 import '@sentry/tracing';
 import * as Sentry from '@sentry/node';
-import { Telegraf } from 'telegraf';
+import { Scenes, session, Telegraf } from 'telegraf';
 import { contextMiddleware } from './src/middleware';
 import config from './src/config';
 import commands from './src/commands';
 import cron from './src/cron';
+import actualityScene from './src/scenes/actuality';
 
 const bot = new Telegraf(config.token);
+const actualityStage = new Scenes.Stage([actualityScene]);
 
 if (config.isProd)
   Sentry.init({ dsn: config.sentryDsn, tracesSampleRate: 1.0, environment: config.currentEnv });
 
+bot.use(session());
+bot.use(actualityStage.middleware());
 bot.use(async (ctx, next) => {
   await contextMiddleware(ctx);
 

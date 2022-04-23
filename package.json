@@ -26,12 +26,12 @@
     "dotenv": "^16.0.0",
     "esm": "^3.2.25",
     "lodash": "^4.17.21",
-    "moment": "^2.29.2",
+    "moment": "^2.29.3",
     "node-schedule": "^2.1.0",
     "telegraf": "^4.7.0"
   },
   "devDependencies": {
-    "eslint": "^8.13.0",
+    "eslint": "^8.14.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
     "nodemon": "^2.0.15"
