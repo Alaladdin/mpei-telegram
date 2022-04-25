@@ -16,18 +16,18 @@ const getActuality = (actualityId) => request.get(`${config.apiUrl}/getActuality
 
 const getFormattedActuality = async (parentSection, actualityId) => {
   const actuality = await getActuality(actualityId);
-  const header = `${parentSection.name}/${actuality.name}`;
+  const header = `*> ${parentSection.name}/${actuality.name}*`;
 
   if (actuality.data) {
     const { updatedAt, updatedBy } = actuality;
     const formattedUpdatedAt = formatDate(updatedAt);
     const updater = updatedBy ? (updatedBy.displayName || updatedBy.username) : 'DELETED USER';
-    const updatedText = `Обновлено ${formattedUpdatedAt} by ${updater}`;
+    const updatedText = `*Обновлено ${formattedUpdatedAt} by ${updater}*`;
 
     return `${header}\n${updatedText}\n\n${actuality.data}`;
   }
 
-  return `${header}\n\nПусто 😔`;
+  return `${header}\n\n\`Пусто 😔\``;
 };
 
 const getAdditionalKeyboardButtons = (section) => {
@@ -76,7 +76,7 @@ actualityScene.action(/openSection/gi, async (ctx) => {
   ctx.session.sectionId = sectionId;
   ctx.session.selectedSection = selectedSection;
 
-  return ctx.editMessageText('`Выбери актуталочку`', replyOptions)
+  return ctx.editMessageText(`*> ${selectedSection.name}*\n\n\`Выбери актуталочку\``, replyOptions)
     .then(() => ctx.answerCbQuery())
     .catch(() => {});
 });
@@ -85,9 +85,13 @@ actualityScene.action(/openActuality/gi, async (ctx) => {
   const actualityId = ctx.update.callback_query.data.split(':')[1];
   const formattedActuality = await getFormattedActuality(ctx.session.selectedSection, actualityId);
   const keyboard = getAdditionalKeyboardButtons(ctx.session.selectedSection);
-  const replyOptions = { parse_mode: 'markdown', ...Markup.inlineKeyboard(keyboard, { columns: 1 }) };
+  const replyOptions = {
+    parse_mode              : 'markdown',
+    disable_web_page_preview: true,
+    ...Markup.inlineKeyboard(keyboard, { columns: 1 }),
+  };
 
-  return ctx.editMessageText(`\`${formattedActuality}\``, replyOptions)
+  return ctx.editMessageText(formattedActuality, replyOptions)
     .then(() => ctx.answerCbQuery())
     .catch(() => {});
 });
