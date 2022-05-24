@@ -18,4 +18,3 @@ export const getFolderModulesInfo = memoize((folderName) => {
 /* eslint-enable no-param-reassign,global-require,import/no-dynamic-require */
 
 export const formatDate = (date, format = 'DD.MM') => moment(date).format(format);
-export const getScheduleDate = (addDays = 0) => moment().add(addDays, 'days').format('YYYY.MM.DD');

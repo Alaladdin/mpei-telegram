@@ -1,6 +1,7 @@
 import { map, memoize } from 'lodash';
 import { Markup } from 'telegraf';
-import { formatDate, getScheduleDate } from '../../helpers';
+import moment from 'moment';
+import { formatDate } from '../../helpers';
 import request from '../../plugins/request';
 import config from '../../config';
 
@@ -22,14 +23,14 @@ export default {
   async executeAction(ctx) {
     const actionName = ctx.update.callback_query.data;
 
-    this.offset += actionName === 'schedulePrevWeek' ? -7 : 7;
+    this.offset += actionName === 'schedulePrevWeek' ? -1 : 1;
 
     return this.sendSchedule(ctx, true)
       .finally(() => ctx.answerCbQuery());
   },
   async sendSchedule(ctx, isEdit = false) {
-    const start = getScheduleDate(this.offset);
-    const finish = getScheduleDate(this.offset + 7);
+    const start = moment().add(this.offset, 'weeks').startOf('isoWeek').format(config.serverDateFormat);
+    const finish = moment().add(this.offset, 'weeks').endOf('isoWeek').format(config.serverDateFormat);
     const schedule = await this.getSchedule({ start, finish });
 
     if (!schedule.error) {

@@ -1,12 +1,12 @@
 import nodeSchedule from 'node-schedule';
+import moment from 'moment';
 import scheduleCommand from '../commands/schedule';
-import { getScheduleDate } from '../helpers';
 import config from '../config';
 
 export default {
   async init(bot) {
     nodeSchedule.scheduleJob('0 0 9 * * *', async () => {
-      const today = getScheduleDate();
+      const today = moment().format(config.serverDateFormat);
       const rawSchedule = await scheduleCommand.getSchedule({ start: today, finish: today });
 
       if (rawSchedule && rawSchedule.length) {
