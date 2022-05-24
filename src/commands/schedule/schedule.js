@@ -53,6 +53,7 @@ export default {
     .then((data) => data.schedule)
     .catch((err) => err),
   formatSchedule: memoize((schedule) => {
+    const today = moment().format('DD.MM');
     const formattedSchedules = map(schedule, (i) => {
       const lesson = [];
 
@@ -67,6 +68,9 @@ export default {
 
       if (i.group)
         lesson.push(`Группа: ${i.group}`);
+
+      if (today === i.date)
+        return map(lesson, (desc) => `🧚 ${desc}`).join('\n');
 
       return lesson.join('\n');
     });
