@@ -21,9 +21,6 @@ a {
   width: 100%;
   height: calc(100% - 50px);
 }
-.wrapper > * + * {
-  margin-top: 15px;
-}
 
 .header {
   position: fixed;
@@ -46,13 +43,16 @@ a {
   font-size: 1.8rem;
   font-weight: bold;
 }
+.mail__meta {
+  margin-bottom: 15px;
+}
+.mail__meta > * + * {
+  margin-top: 5px;
+}
 .mail__title {
-  margin-top: 0;
+  margin-bottom: 10px;
   font-size: 1.3rem;
   font-weight: bold;
-}
-.mail__attachments {
-  margin-top: 5px;
 }
 .mail__attachments .fa-file {
   margin-right: 2px;
@@ -61,6 +61,7 @@ a {
   padding: 15px 20px;
   border-radius: 4px;
   white-space: pre-line;
+  line-height: 1.5;
   font-family: inherit;
   background-color: #303134;
   box-shadow: 5px 5px 0;

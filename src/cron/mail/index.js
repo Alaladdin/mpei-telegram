@@ -15,50 +15,47 @@ export default {
       fs.mkdirSync(localMetadata.fileFolderPath);
 
     nodeSchedule.scheduleJob('0 */1 * * *', async () => {
-      console.info('mail parser schedule');
-
-      browser = await puppeteer.launch({
-        args           : ['--no-sandbox', `--window-size=${1080},${720}`],
-        headless       : config.isProd,
-        defaultViewport: {
-          width : 1080,
-          height: 720,
-        },
-      });
-      page = await browser.newPage();
-
-      this.singIn()
+      this.openBrowser()
+        .then(() => this.singIn())
         .then(() => this.checkUnread(bot))
         .catch((error) => {
           const errorMessage = `[PARSER ERROR]: ${error}`;
 
-          bot.telegram.sendMessage(config.adminChatId, `\`${errorMessage}\``, { parse_mode: 'Markdown' });
+          this.sendMessage(bot, config.adminChatId, errorMessage);
+
           console.error(errorMessage);
           this.closeBrowser();
         });
     });
   },
-  singIn() {
-    console.info('singIn');
+  async openBrowser() {
+    browser = await puppeteer.launch({
+      args           : ['--no-sandbox', `--window-size=${1080},${720}`],
+      headless       : config.isProd,
+      defaultViewport: {
+        width : 1080,
+        height: 720,
+      },
+    });
+    page = await browser.newPage();
 
+    return true;
+  },
+  singIn() {
     return page
       .goto(localMetadata.mailUrl)
       .then(() => this.enterAuthData());
   },
   async enterAuthData() {
-    console.info('enterAuthData');
-
     await page.type('#username', config.mailUsername);
     await page.type('#password', config.mailPassword);
-    await page.click(localMetadata.signInButtonSelector);
+    await page.click('.signinbutton');
     await page.waitForTimeout(2000);
 
     return page.evaluate(() => !!document.querySelector('#lo'))
       .then((isLoggedIn) => !isLoggedIn && this.enterAuthData());
   },
   async checkUnread(bot) {
-    console.info('checkUnread');
-
     await page.goto(localMetadata.mailUrl);
 
     return page.evaluate(() => !!document.querySelector('.cntnt .bld'))
@@ -67,26 +64,30 @@ export default {
 
         return hasUnread;
       })
-      .then((needToRecheck) => {
-        if (needToRecheck)
-          this.checkUnread(bot);
-      });
+      .then((needToRecheck) => needToRecheck && this.checkUnread(bot));
   },
   async handleUnread(bot) {
-    console.info('handleUnread');
+    const letterTitle = await page.$eval('.cntnt .bld a', (titleEl) => titleEl.innerText.trim());
+    const isDisallowedLetter = letterTitle.match(/(github|disarmed|spam|ticket)/gi);
+    const chatId = isDisallowedLetter ? config.adminChatId : config.mainChatId;
 
-    await page.click(localMetadata.unreadLetterLinkSelector);
+    await page.click('.cntnt .bld a');
     await page.waitForTimeout(1000);
     await page.addStyleTag({ path: localMetadata.stylesPath });
     await page.addScriptTag({ path: localMetadata.scriptPath });
     await page.waitForTimeout(1500);
     await page.screenshot({ type: 'jpeg', quality: 100, path: localMetadata.filePath });
 
-    return bot.telegram.sendPhoto(config.mainChatId, { source: localMetadata.filePath });
+    return bot.telegram.sendPhoto(
+      chatId,
+      { source: localMetadata.filePath },
+      { caption: `\`${letterTitle}\``, parse_mode: 'Markdown' }
+    );
+  },
+  sendMessage(bot, chatId, message) {
+    return bot.telegram.sendMessage(chatId, `\`${message}\``, { parse_mode: 'Markdown' });
   },
   closeBrowser() {
-    console.info('closeBrowser');
-
     return browser.close();
   },
 };
