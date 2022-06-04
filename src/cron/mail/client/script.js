@@ -1,10 +1,10 @@
 /* global document */
 
-const mailTitle = document.querySelector('.sub');
-const mailDate = document.querySelector('.hdtxnr');
-const mailSender = document.querySelector('.rwRRO');
-const mailBody = document.querySelector('.bdy');
-const mailAttachments = document.querySelectorAll('#spnAtmt');
+const letterTitle = document.querySelector('.sub');
+const letterDate = document.querySelector('.hdtxnr');
+const letterSender = document.querySelector('.rwRRO');
+const letterBody = document.querySelector('.bdy');
+const letterAttachments = document.querySelectorAll('#spnAtmt');
 
 const removeLineBreaks = (text) => text.replace('\n\n', () => '\n');
 const wrapUrls = (text) => {
@@ -13,25 +13,25 @@ const wrapUrls = (text) => {
   return text.replace(linkPattern, (url) => `<a href="${url}">${url}</a>`);
 };
 
-const mailBodyText = wrapUrls(removeLineBreaks(mailBody.innerText.trim()));
-const mailBodyTag = mailBodyText ? `<div class='mail__body'>${mailBodyText}</div>` : '';
-const mailFormattedDate = new Date(mailDate.innerText).toLocaleString();
+const letterBodyText = wrapUrls(removeLineBreaks(letterBody.innerText.trim()));
+const letterBodyTag = letterBodyText ? `<div class='letter__body'>${letterBodyText}</div>` : '';
+const letterFormattedDate = new Date(letterDate.innerText).toLocaleString();
 
 document.body.innerHTML = `
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"  />
   <header class='header'>WINX MAGIC SYSTEM</header>
-  <div class='wrapper'>
-    <div class='mail__title'>${mailTitle.innerText}</div>
+  <div class='letter'>
+    <div class='letter__title'>${letterTitle.innerText}</div>
 
-    <div class='mail__meta'>
-      <div class='mail__date'>Получено: ${mailFormattedDate}</div>
-      <div class='mail__sender'>Отправитель: ${mailSender.innerHTML}</div>
-      <div class='mail__attachments'>
+    <div class='letter__meta'>
+      <div class='letter__date'>Получено: ${letterFormattedDate}</div>
+      <div class='letter__sender'>Отправитель: ${letterSender.innerHTML}</div>
+      <div class='letter__attachments'>
         <span>Вложений:</span>
-        <i class="fa-solid fa-file"></i> ${mailAttachments.length}
+        <i class="fa-solid fa-file"></i> ${letterAttachments.length}
       </div>
     </div>
 
-    ${mailBodyTag}
+    ${letterBodyTag}
   </div>
 `;
