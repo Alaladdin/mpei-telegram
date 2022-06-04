@@ -34,7 +34,7 @@ export default {
 
           bot.telegram.sendMessage(config.adminChatId, `\`${errorMessage}\``, { parse_mode: 'Markdown' });
           console.error(errorMessage);
-          this.endProcess();
+          this.closeBrowser();
         });
     });
   },
@@ -51,7 +51,7 @@ export default {
     await page.type('#username', config.mailUsername);
     await page.type('#password', config.mailPassword);
     await page.click(localMetadata.signInButtonSelector);
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
 
     return page.evaluate(() => !!document.querySelector('#lo'))
       .then((isLoggedIn) => !isLoggedIn && this.enterAuthData());
@@ -62,14 +62,21 @@ export default {
     await page.goto(localMetadata.mailUrl);
 
     return page.evaluate(() => !!document.querySelector('.cntnt .bld'))
-      .then((hasUnread) => (hasUnread ? this.handleUnread(bot) : this.endProcess()))
-      .then(() => this.checkUnread(bot));
+      .then(async (hasUnread) => {
+        await (hasUnread ? this.handleUnread(bot) : this.closeBrowser());
+
+        return hasUnread;
+      })
+      .then((needToRecheck) => {
+        if (needToRecheck)
+          this.checkUnread(bot);
+      });
   },
   async handleUnread(bot) {
     console.info('handleUnread');
 
     await page.click(localMetadata.unreadLetterLinkSelector);
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1000);
     await page.addStyleTag({ path: localMetadata.stylesPath });
     await page.addScriptTag({ path: localMetadata.scriptPath });
     await page.waitForTimeout(1500);
@@ -77,8 +84,8 @@ export default {
 
     return bot.telegram.sendPhoto(config.mainChatId, { source: localMetadata.filePath });
   },
-  endProcess() {
-    console.info('endProcess');
+  closeBrowser() {
+    console.info('closeBrowser');
 
     return browser.close();
   },
