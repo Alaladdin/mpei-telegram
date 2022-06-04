@@ -1,18 +1,31 @@
-import Nightmare from 'nightmare';
+/* global document */
+
+import puppeteer from 'puppeteer';
 import fs from 'fs';
 import nodeSchedule from 'node-schedule';
 import config from '../../config';
 import localMetadata from './metadata';
 
-let nightmare;
+let browser;
+let page;
 
 export default {
-  init(bot) {
+  async init(bot) {
     if (!fs.existsSync(localMetadata.fileFolderPath))
       fs.mkdirSync(localMetadata.fileFolderPath);
 
-    nodeSchedule.scheduleJob('0 */1 * * *', () => {
-      nightmare = Nightmare({ width: 1080, height: 720, show: !config.isProd });
+    nodeSchedule.scheduleJob('0 */1 * * *', async () => {
+      console.info('mail parser schedule');
+
+      browser = await puppeteer.launch({
+        args           : ['--no-sandbox', `--window-size=${1080},${720}`],
+        headless       : config.isProd,
+        defaultViewport: {
+          width : 1080,
+          height: 720,
+        },
+      });
+      page = await browser.newPage();
 
       this.singIn()
         .then(() => this.checkUnread(bot))
@@ -26,36 +39,47 @@ export default {
     });
   },
   singIn() {
-    return nightmare
+    console.info('singIn');
+
+    return page
       .goto(localMetadata.mailUrl)
       .then(() => this.enterAuthData());
   },
-  enterAuthData() {
-    return nightmare
-      .insert('#username', config.mailUsername)
-      .insert('#password', config.mailPassword)
-      .click(localMetadata.signInButtonSelector)
-      .wait(1000)
-      .exists(localMetadata.isLoggedSelector)
+  async enterAuthData() {
+    console.info('enterAuthData');
+
+    await page.type('#username', config.mailUsername);
+    await page.type('#password', config.mailPassword);
+    await page.click(localMetadata.signInButtonSelector);
+    await page.waitForTimeout(1000);
+
+    return page.evaluate(() => !!document.querySelector('#lo'))
       .then((isLoggedIn) => !isLoggedIn && this.enterAuthData());
   },
-  checkUnread(bot) {
-    return nightmare
-      .goto(localMetadata.mailUrl)
-      .exists(localMetadata.unreadLetterSelector)
+  async checkUnread(bot) {
+    console.info('checkUnread');
+
+    await page.goto(localMetadata.mailUrl);
+
+    return page.evaluate(() => !!document.querySelector('.cntnt .bld'))
       .then((hasUnread) => (hasUnread ? this.handleUnread(bot) : this.endProcess()))
       .then(() => this.checkUnread(bot));
   },
-  handleUnread(bot) {
-    return nightmare
-      .click(localMetadata.unreadLetterLinkSelector)
-      .inject('css', localMetadata.stylesPath)
-      .inject('js', localMetadata.scriptPath)
-      .wait(1500)
-      .screenshot(localMetadata.filePath)
-      .then(() => bot.telegram.sendPhoto(config.mainChatId, { source: localMetadata.filePath }));
+  async handleUnread(bot) {
+    console.info('handleUnread');
+
+    await page.click(localMetadata.unreadLetterLinkSelector);
+    await page.waitForTimeout(500);
+    await page.addStyleTag({ path: localMetadata.stylesPath });
+    await page.addScriptTag({ path: localMetadata.scriptPath });
+    await page.waitForTimeout(1500);
+    await page.screenshot({ type: 'jpeg', quality: 100, path: localMetadata.filePath });
+
+    return bot.telegram.sendPhoto(config.mainChatId, { source: localMetadata.filePath });
   },
   endProcess() {
-    return nightmare.end();
+    console.info('endProcess');
+
+    return browser.close();
   },
 };
