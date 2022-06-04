@@ -11,6 +11,9 @@ export default {
   authToken       : process.env.AUTH_TOKEN,
   apiUrl          : process.env.API_URL,
   sentryDsn       : process.env.SENTRY_DSN,
-  mainChat        : isProd ? '-1001544093021' : '398532631',
+  mainChatId      : isProd ? '-1001544093021' : '398532631',
+  adminChatId     : '398532631',
   serverDateFormat: 'YYYY.MM.DD',
+  mailUsername    : process.env.MAIL_USERNAME,
+  mailPassword    : process.env.MAIL_PASSWORD,
 };

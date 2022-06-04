@@ -1,6 +1,6 @@
 {
   "name": "mpei-telegram",
-  "version": "1.8.3",
+  "version": "1.9.0",
   "description": "MPEI telegram bot",
   "main": "app.js",
   "scripts": {
@@ -27,6 +27,7 @@
     "esm": "^3.2.25",
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
+    "nightmare": "^3.0.2",
     "node-schedule": "^2.1.0",
     "telegraf": "^4.7.0"
   },
