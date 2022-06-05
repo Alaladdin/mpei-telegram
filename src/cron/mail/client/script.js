@@ -17,6 +17,7 @@ const letterTitle = document.querySelector('.sub');
 const letterDate = document.querySelector('.hdtxnr'); // need eng version of date
 const letterSender = document.querySelector('.rwRRO');
 const letterBody = document.querySelector('.bdy');
+const letterBodyLinks = [...letterBody.querySelectorAll('a')].map((link) => link.innerText);
 const letterAttachments = document.querySelectorAll('#lnkAtmt');
 const letterAttachmentsTags = [...letterAttachments].map((attachment, i) => {
   const fileName = attachment.innerText.replace(/\([^(]*\)/, '').trim();
@@ -31,11 +32,15 @@ const letterAttachmentsTags = [...letterAttachments].map((attachment, i) => {
   </span>`;
 }).join('');
 
-const removeLineBreaks = (text) => text.replace('\n\n', () => '\n');
+const removeLineBreaks = (text) => text.replaceAll('\n\n\n', () => '\n\n');
 const wrapUrls = (text) => {
-  const linkPattern = /(https?:\/\/[^\s]+)/gim;
+  let newText = text;
 
-  return text.replace(linkPattern, (url) => `<a href="${url}">${url}</a>`);
+  letterBodyLinks.forEach((linkTitle) => {
+    newText = newText.replaceAll(linkTitle, () => `<a href="https://google.com">${linkTitle}</a>`);
+  });
+
+  return newText;
 };
 
 const letterBodyText = wrapUrls(removeLineBreaks(letterBody.innerText.trim()));

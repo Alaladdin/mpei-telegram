@@ -13,7 +13,7 @@ let page;
 
 export default {
   init(bot) {
-    nodeSchedule.scheduleJob('0 */1 * * *', async () => {
+    nodeSchedule.scheduleJob('0 */1 * * *', () => {
       this.openBrowser()
         .then(() => this.singIn())
         .then(() => this.checkLetterUnread(bot))
@@ -68,6 +68,8 @@ export default {
     await page.waitForTimeout(2000);
 
     return this.handleLetterFiles(bot, chatId, async () => {
+      const letterLinks = await page.$$eval('.bdy a', (links) => links.map((link) => link.innerText));
+
       await page.addStyleTag({ path: localMetadata.stylesPath });
       await page.addScriptTag({ path: localMetadata.scriptPath });
       await page.waitForTimeout(3000);
@@ -77,7 +79,7 @@ export default {
       return bot.telegram.sendPhoto(
         chatId,
         { source: localMetadata.filePath },
-        { caption: `\`${letterTitle}\``, parse_mode: 'Markdown' }
+        { caption: `*${letterTitle}*\n\n${letterLinks.join('\n\n')}`, parse_mode: 'Markdown' }
       );
     });
   },
