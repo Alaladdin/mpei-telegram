@@ -52,7 +52,7 @@ document.body.innerHTML = `
       <div class='letter__date'>Получено: ${letterFormattedDate}</div>
       <div class='letter__sender'>Отправитель: ${letterSender.innerHTML}</div>
       <div class='letter__attachment'>
-        <span>Вложения (${letterAttachments.length}): </span>
+        <span>Вложения (${letterAttachments.length})${letterAttachments.length ? ':' : ''} </span>
         ${letterAttachmentsTags}
       </div>
     </div>

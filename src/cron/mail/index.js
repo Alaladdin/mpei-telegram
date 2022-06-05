@@ -73,19 +73,21 @@ export default {
     await this.reCreateFilesFolder();
     await page.click('.cntnt .bld a');
     await page.waitForTimeout(1000);
-    await this.handleLetterFiles(bot, chatId);
-    await page.addStyleTag({ path: localMetadata.stylesPath });
-    await page.addScriptTag({ path: localMetadata.scriptPath });
-    await page.waitForTimeout(2000);
-    await page.screenshot({ type: 'jpeg', quality: 100, path: localMetadata.filePath });
 
-    return bot.telegram.sendPhoto(
-      chatId,
-      { source: localMetadata.filePath },
-      { caption: `\`${letterTitle}\``, parse_mode: 'Markdown' }
-    );
+    return this.handleLetterFiles(bot, chatId, async () => {
+      await page.addStyleTag({ path: localMetadata.stylesPath });
+      await page.addScriptTag({ path: localMetadata.scriptPath });
+      await page.waitForTimeout(2000);
+      await page.screenshot({ type: 'jpeg', quality: 100, path: localMetadata.filePath });
+
+      return bot.telegram.sendPhoto(
+        chatId,
+        { source: localMetadata.filePath },
+        { caption: `\`${letterTitle}\``, parse_mode: 'Markdown' }
+      );
+    });
   },
-  async handleLetterFiles(bot, chatId) {
+  async handleLetterFiles(bot, chatId, callback) {
     await page._client.send('Page.setDownloadBehavior', {
       behavior    : 'allow',
       downloadPath: localMetadata.filesFolderPath,
@@ -98,15 +100,17 @@ export default {
 
         return attachmentsWrapper.length;
       })
-      .then((attachmentsCount) => page.waitForTimeout(attachmentsCount * 200))
+      .then((attachmentsCount) => page.waitForTimeout(attachmentsCount * 500))
       .then(async () => {
         const filesFolder = await fs.readdir(localMetadata.filesFolderPath);
         const letterFiles = reject(filesFolder, (file) => file === 'letter.png');
 
+        await callback();
+
         each(letterFiles, (file) => {
           const filePath = path.resolve(__dirname, '../../../tmp', file);
 
-          bot.telegram.sendDocument(chatId, { source: filePath });
+          return bot.telegram.sendDocument(chatId, { source: filePath });
         });
       });
   },
