@@ -13,6 +13,7 @@ module.exports = {
     'no-underscore-dangle'            : 0,
     'no-console'                      : process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger'                     : process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-unused-expressions'           : [2, { allowTernary: true }],
     'nonblock-statement-body-position': ['error', 'any'],
     curly                             : ['error', 'multi-or-nest', 'consistent'],
     'linebreak-style'                 : ['warn', 'windows'],
