@@ -68,7 +68,9 @@ export default {
     await page.waitForTimeout(2000);
 
     return this.handleLetterFiles(bot, chatId, async () => {
-      const letterLinks = await page.$$eval('.bdy a', (links) => links.map((link) => link.innerText));
+      const letterLinks = await page.$$eval('.bdy a', (links) => links
+        .filter((link) => link.innerText.includes('http'))
+        .map((link, i) => `[Cцылка ${i + 1}](${link.innerText})`));
 
       await page.addStyleTag({ path: localMetadata.stylesPath });
       await page.addScriptTag({ path: localMetadata.scriptPath });
@@ -79,7 +81,7 @@ export default {
       return bot.telegram.sendPhoto(
         chatId,
         { source: localMetadata.filePath },
-        { caption: `*${letterTitle}*\n\n${letterLinks.join('\n\n')}`, parse_mode: 'Markdown' }
+        { caption: `*${letterTitle}*\n\n${letterLinks.join(', ')}`, parse_mode: 'Markdown' }
       );
     });
   },
