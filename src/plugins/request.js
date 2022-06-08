@@ -16,4 +16,7 @@ export default {
   get: (url, options) => axios.get(url, merge({ headers: baseHeaders }, options))
     .then((res) => res.data)
     .catch(handleError),
+  post: (url, data, options) => axios.post(url, data, merge({ headers: baseHeaders }, options))
+    .then((res) => res.data)
+    .catch(handleError),
 };

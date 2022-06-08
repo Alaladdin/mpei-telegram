@@ -42,7 +42,7 @@ export default {
     await page.type('#username', config.mailUsername);
     await page.type('#password', config.mailPassword);
     await page.click('.signinbutton');
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(5000);
 
     return page.evaluate(() => !!document.querySelector('#lo'))
       .then((isLoggedIn) => !isLoggedIn && this.enterAuthData());
