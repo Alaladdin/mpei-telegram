@@ -6,15 +6,16 @@ import config from './src/config';
 import commands from './src/commands';
 import cron from './src/cron';
 import actualityScene from './src/scenes/actuality';
+import setBarsCredentialsScene from './src/scenes/setBarsCredentials';
 
 const bot = new Telegraf(config.token);
-const actualityStage = new Scenes.Stage([actualityScene]);
+const scenes = new Scenes.Stage([actualityScene, setBarsCredentialsScene]);
 
 if (config.isProd)
   Sentry.init({ dsn: config.sentryDsn, tracesSampleRate: 1.0, environment: config.currentEnv });
 
 bot.use(session());
-bot.use(actualityStage.middleware());
+bot.use(scenes.middleware());
 bot.use(async (ctx, next) => {
   await contextMiddleware(ctx);
 

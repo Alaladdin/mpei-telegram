@@ -5,14 +5,14 @@ import { filter, map, memoize } from 'lodash';
 
 /* eslint-disable no-param-reassign,global-require,import/no-dynamic-require */
 export const getFolderModulesInfo = memoize((folderName) => {
-  const commandsFolder = path.resolve(__dirname, `../${folderName}`);
-  const commandsFolderData = fs.readdirSync(commandsFolder);
-  const commandsList = filter(commandsFolderData, (itemName) => itemName !== 'index.js');
+  const modulesFolder = path.resolve(__dirname, `../${folderName}`);
+  const modulesFolderData = fs.readdirSync(modulesFolder);
+  const modulesList = filter(modulesFolderData, (itemName) => itemName !== 'index.js');
 
-  return map(commandsList, (commandPath) => {
-    const commandFilePath = path.resolve(commandsFolder, commandPath);
+  return map(modulesList, (modulePath) => {
+    const moduleFilePath = path.resolve(modulesFolder, modulePath);
 
-    return require(commandFilePath).default;
+    return require(moduleFilePath).default;
   });
 });
 /* eslint-enable no-param-reassign,global-require,import/no-dynamic-require */
