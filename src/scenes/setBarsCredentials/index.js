@@ -1,21 +1,11 @@
 import { Markup, Scenes } from 'telegraf';
 import { find } from 'lodash';
-import request from '../plugins/request';
-import config from '../config';
+import request from '../../plugins/request';
+import config from '../../config';
+import metadata from './metadata';
 
-// todo refactor
-const stepsInfo = [
-  {
-    objectKey  : 'username',
-    title      : 'Логин',
-    placeholder: 'Логин от барса',
-  },
-  {
-    objectKey  : 'password',
-    title      : 'Пароль',
-    placeholder: 'Пароль от барса',
-  },
-];
+const { stepsInfo } = metadata;
+const setBarsCredentials = (userData) => request.post(`${config.apiUrl}/bars/setUser`, userData);
 
 const handleMessage = async (ctx) => {
   const { text, reply_to_message: replyToMessage } = ctx.update.message;
@@ -30,10 +20,6 @@ const handleMessage = async (ctx) => {
 
   throw new Error('No "reply_to_message" found');
 };
-
-const setBarsCredentials = (userData) => request.post(`${config.apiUrl}/bars/setUser`, userData)
-  .then((data) => data)
-  .catch((err) => err);
 
 const handleReply = async (ctx, stepInfo) => {
   const replyOption = Markup.forceReply().placeholder(stepInfo.placeholder).selective(true);
@@ -85,7 +71,7 @@ setBarsUserScene.action('leaveScene', async (ctx) => {
   await ctx.answerCbQuery();
   await ctx.replyWithMarkdown('`Не хочешь, как хочешь, блин`', { reply_markup: { remove_keyboard: true } });
 
-  return ctx.wizard.next();
+  return ctx.scene.leave();
 });
 
 export default setBarsUserScene;
