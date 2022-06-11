@@ -8,7 +8,7 @@ export default {
   name       : 'get_bars_marks',
   description: 'Вывод оценок барса',
   async execute(ctx) {
-    this.getMarks(ctx)
+    this.getMarks(ctx.userId)
       .then(async (marksData) => {
         const { username, marks, updatedAt, isCredentialsError } = marksData;
         const userText = `Пользователь: ${username}`;
@@ -32,7 +32,7 @@ export default {
         ctx.replyWithMarkdown(`\`${err.error}\``);
       });
   },
-  getMarks(ctx) {
-    return request.get(`${config.apiUrl}/bars/getMarks/${ctx.userId}`);
+  getMarks(userId) {
+    return request.get(`${config.apiUrl}/bars/getMarks/${userId}`);
   },
 };

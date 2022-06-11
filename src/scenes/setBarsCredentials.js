@@ -1,8 +1,7 @@
 import { Markup, Scenes } from 'telegraf';
-import request from '../plugins/request';
-import config from '../config';
+import setBarsCredentialsCommand from '../commands/setBarsCredentials';
 
-const setBarsCredentials = (credentials) => request.post(`${config.apiUrl}/bars/setUser`, credentials);
+const setBarsCredentials = setBarsCredentialsCommand.setBarsCredentials;
 
 const enterScene = async (ctx) => {
   const keyboard = Markup.inlineKeyboard([Markup.button.callback('Отмена', 'leaveScene')]);

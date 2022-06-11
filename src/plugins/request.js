@@ -19,4 +19,7 @@ export default {
   post: (url, data, options) => axios.post(url, data, merge({ headers: baseHeaders }, options))
     .then((res) => res.data)
     .catch(handleError),
+  delete: (url, options) => axios.delete(url, merge({ headers: baseHeaders }, options))
+    .then((res) => res.data)
+    .catch(handleError),
 };
