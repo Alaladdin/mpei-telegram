@@ -27,9 +27,9 @@ export default {
             const maxMarksCount = getMaxMarksItem(marks);
             const rows = map(marks, ({ discipline, semester, final }) => {
               const marksCount = semester.length + final.length;
-              const separators = Array(maxMarksCount - marksCount).fill(' ');
+              const marksPlugs = Array(maxMarksCount - marksCount).fill(' ');
 
-              return [discipline, ...semester, ...separators, '|', ...final];
+              return [discipline, ...semester, ...marksPlugs, '|', ...final];
             });
 
             return ctx.replyWithMarkdown(`\`${textTable(rows)}\``);
