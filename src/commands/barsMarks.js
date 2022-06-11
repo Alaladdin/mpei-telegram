@@ -1,11 +1,17 @@
-import { map } from 'lodash';
+import { map, maxBy } from 'lodash';
 import textTable from 'text-table';
 import request from '../plugins/request';
 import config from '../config';
 import { formatDate } from '../helpers';
 
+const getMaxMarksItem = (marks) => {
+  const maxMarksItem = maxBy(marks, ({ semester, final }) => semester.length + final.length);
+
+  return maxMarksItem.semester.length + maxMarksItem.final.length;
+};
+
 export default {
-  name       : 'get_bars_marks',
+  name       : 'bars_marks',
   description: 'Вывод оценок барса',
   async execute(ctx) {
     this.getMarks(ctx.userId)
@@ -18,7 +24,13 @@ export default {
 
         if (!isCredentialsError) {
           if (marks && marks.length) {
-            const rows = map(marks, (mark) => ([mark.discipline, ...mark.marks]));
+            const maxMarksCount = getMaxMarksItem(marks);
+            const rows = map(marks, ({ discipline, semester, final }) => {
+              const marksCount = semester.length + final.length;
+              const separators = Array(maxMarksCount - marksCount).fill(' ');
+
+              return [discipline, ...semester, ...separators, '|', ...final];
+            });
 
             return ctx.replyWithMarkdown(`\`${textTable(rows)}\``);
           }

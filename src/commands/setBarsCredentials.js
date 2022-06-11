@@ -2,7 +2,7 @@ import { Markup } from 'telegraf';
 import { map } from 'lodash';
 import request from '../plugins/request';
 import config from '../config';
-import getBarsMarksCommand from './getBarsMarks';
+import getBarsMarksCommand from './barsMarks';
 
 const getKeyboardInfo = (isUserExists) => {
   if (!isUserExists)
