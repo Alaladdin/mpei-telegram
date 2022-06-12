@@ -6,7 +6,6 @@ const setBarsCredentials = setBarsCredentialsCommand.setBarsCredentials;
 const enterScene = async (ctx) => {
   const keyboard = Markup.inlineKeyboard([Markup.button.callback('Отмена', 'leaveScene')]);
 
-  await ctx.replyWithMarkdown('*Данные, пока, хранятся в открытом виде*');
   await ctx.replyWithMarkdown('*Логин и пароль привязываются к аккаунту телеграма*', keyboard);
   await ctx.replyWithMarkdown('`Отправь мне логин и пароль от барса в формате`\n`username : password`');
 
