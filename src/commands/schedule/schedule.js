@@ -29,8 +29,8 @@ export default {
       .finally(() => ctx.answerCbQuery());
   },
   async sendSchedule(ctx, isEdit = false) {
-    const start = moment().add(this.offset, 'weeks').startOf('isoWeek').format(config.serverDateFormat);
-    const finish = moment().add(this.offset, 'weeks').endOf('isoWeek').format(config.serverDateFormat);
+    const start = this.getScheduleDate(true);
+    const finish = this.getScheduleDate(false);
     const schedule = await this.getSchedule({ start, finish });
 
     if (!schedule.error) {
@@ -48,6 +48,12 @@ export default {
     await ctx.replyWithMarkdown(`\`Error: ${schedule.error}\``);
 
     throw schedule.error;
+  },
+  getScheduleDate(isStart) {
+    const rawDate = moment().add(2, 'days').add(this.offset, 'weeks');
+    const date = isStart ? rawDate.startOf('isoWeek') : rawDate.endOf('isoWeek');
+
+    return date.format(config.serverDateFormat);
   },
   getSchedule: ({ start, finish }) => request.get(`${config.apiUrl}/getSchedule`, { params: { start, finish } })
     .then((data) => data.schedule)
