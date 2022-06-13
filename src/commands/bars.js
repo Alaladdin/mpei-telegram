@@ -11,7 +11,7 @@ const getMaxMarksItem = (marks) => {
 };
 
 export default {
-  name       : 'bars_marks',
+  name       : 'b',
   description: 'Вывод оценок барса',
   async execute(ctx) {
     this.getMarks(ctx.userId)

@@ -2,7 +2,7 @@ import { Markup } from 'telegraf';
 import { map } from 'lodash';
 import request from '../plugins/request';
 import config from '../config';
-import getBarsMarksCommand from './barsMarks';
+import getBarsMarksCommand from './bars';
 
 const getKeyboardInfo = (isUserExists) => {
   if (!isUserExists)
@@ -15,7 +15,7 @@ const getKeyboardInfo = (isUserExists) => {
 };
 
 export default {
-  name       : 'bars_credentials',
+  name       : 'sb',
   description: 'Управление данными барса',
   actionNames: ['setBarsCredentials', 'removeBarsCredentials'],
   async execute(ctx) {
