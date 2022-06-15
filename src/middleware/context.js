@@ -1,4 +1,5 @@
 import { some } from 'lodash';
+import config from '../config';
 
 export default async (ctx) => {
   const { message, callback_query: callbackQuery } = ctx.update;
@@ -13,12 +14,12 @@ export default async (ctx) => {
     ctx.isPrivateChat = chat.type === 'private';
     ctx.userId = data.from.id;
     ctx.username = data.from.first_name;
-    ctx.isAdmin = false;
+    ctx.isAdmin = ctx.userId === config.adminChatId;
 
     if (!ctx.isPrivateChat) {
       const chatAdministrators = await ctx.getChatAdministrators(ctx.chatId);
 
-      ctx.isAdmin = some(chatAdministrators, ['user.id', ctx.userId]);
+      ctx.isAdmin = ctx.isAdmin || some(chatAdministrators, ['user.id', ctx.userId]);
     }
   }
 };

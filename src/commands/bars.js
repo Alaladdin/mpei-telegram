@@ -50,7 +50,7 @@ export default {
     if (!ctx.isAdmin) return '';
 
     const totalUsersText = `Аккаунтов: ${userData.totalUsers}`;
-    const totalErroredUsersText = `Аккаунты с ошибками: ${userData.totalErroredUsers}`;
+    const totalErroredUsersText = `Аккаунтов с ошибками: ${userData.totalErroredUsers}`;
 
     return [totalUsersText, totalErroredUsersText].join('\n');
   },
