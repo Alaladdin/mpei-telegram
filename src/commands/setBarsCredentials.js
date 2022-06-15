@@ -28,7 +28,7 @@ export default {
     return ctx.replyWithMarkdown('`Команда работает только в личных сообщениях`');
   },
   async getReplyData(ctx, additionalOptions = {}) {
-    const barsUserUsername = await getBarsMarksCommand.getMarks(ctx.userId)
+    const barsUserUsername = await getBarsMarksCommand.getUser(ctx.userId)
       .then((userData) => userData.username)
       .catch(() => null);
 

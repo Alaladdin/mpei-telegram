@@ -18,7 +18,7 @@ export default async (ctx) => {
     if (!ctx.isPrivateChat) {
       const chatAdministrators = await ctx.getChatAdministrators(ctx.chatId);
 
-      ctx.isAdmin = some(chatAdministrators, (admin) => admin.user.id === ctx.userId);
+      ctx.isAdmin = some(chatAdministrators, ['user.id', ctx.userId]);
     }
   }
 };

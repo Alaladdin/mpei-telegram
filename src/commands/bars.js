@@ -14,15 +14,17 @@ export default {
   name       : 'b',
   description: 'Вывод оценок барса',
   async execute(ctx) {
-    this.getMarks(ctx.userId)
-      .then(async (marksData) => {
-        const { username, marks, updatedAt, isCredentialsError } = marksData;
-        const userText = `Пользователь: ${username}`;
-        const updatedAtText = `Обновлено: ${formatDate(updatedAt, 'HH:mm — DD.MM')}`;
+    this.getUser(ctx.userId)
+      .then(async (userData) => {
+        const userText = `Пользователь: ${userData.username}`;
+        const updatedAtText = `Обновлено: ${formatDate(userData.updatedAt, 'HH:mm — DD.MM')}`;
+        const statsText = this.getStatsText(ctx, userData);
 
-        await ctx.replyWithMarkdown(`\`${userText}\n${updatedAtText}\``);
+        await ctx.replyWithMarkdown(`\`${userText}\n${updatedAtText}\n\n${statsText}\``);
 
-        if (!isCredentialsError) {
+        if (!userData.isCredentialsError) {
+          const { marks } = userData;
+
           if (marks && marks.length) {
             const maxMarksCount = getMaxMarksItem(marks);
             const rows = map(marks, ({ discipline, semester, final }) => {
@@ -44,7 +46,15 @@ export default {
         ctx.replyWithMarkdown(`\`${err.error}\``);
       });
   },
-  getMarks(userId) {
-    return request.get(`${config.apiUrl}/bars/getMarks/${userId}`);
+  getStatsText(ctx, userData) {
+    if (!ctx.isAdmin) return '';
+
+    const totalUsersText = `Аккаунтов: ${userData.totalUsers}`;
+    const totalErroredUsersText = `Аккаунты с ошибками: ${userData.totalErroredUsers}`;
+
+    return [totalUsersText, totalErroredUsersText].join('\n');
+  },
+  getUser(userId) {
+    return request.get(`${config.apiUrl}/bars/getUser/${userId}`);
   },
 };
