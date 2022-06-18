@@ -8,8 +8,8 @@ export default async (ctx) => {
   if (data) {
     const chat = data.message ? data.message.chat : data.chat;
 
-    ctx.sentryName = data.data || data.text;
-    ctx.sentryOperation = data.data ? 'action' : 'command';
+    ctx.operationPayload = data.data || data.text;
+    ctx.operation = data.data ? 'action' : 'command';
     ctx.chatId = chat.id;
     ctx.isPrivateChat = chat.type === 'private';
     ctx.userId = data.from.id;

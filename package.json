@@ -1,6 +1,6 @@
 {
   "name": "mpei-telegram",
-  "version": "1.10.11",
+  "version": "1.10.12",
   "description": "MPEI telegram bot",
   "main": "app.js",
   "scripts": {
