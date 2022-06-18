@@ -21,10 +21,9 @@ export const getFormattedActuality = async (section, actualityId) => getActualit
     const header = `*${section.name}/${actuality.name}*`;
 
     if (actuality.data) {
-      const { updatedAt, updatedBy } = actuality;
-      const formattedUpdatedAt = formatDate(updatedAt);
+      const { updatedBy, updatedAt } = actuality;
       const updater = updatedBy ? (updatedBy.displayName || updatedBy.username) : 'DELETED USER';
-      const updatedText = `*Обновлено ${formattedUpdatedAt} by ${updater}*`;
+      const updatedText = `*Обновлено ${formatDate(updatedAt)} by ${updater}*`;
 
       return `${header}\n${updatedText}\n\n${actuality.data}`;
     }
@@ -32,27 +31,35 @@ export const getFormattedActuality = async (section, actualityId) => getActualit
     return `${header}\n\n\`Пусто 😔\``;
   });
 
-export const getAdditionalKeyboardButtons = (section) => {
-  const buttons = [Markup.button.callback('↺ Выбрать раздел', 'reEnterScene')];
+const getButton = (...args) => Markup.button.callback(...args);
 
-  if (section)
-    buttons.unshift(Markup.button.callback(`${section.name}`, `openSection:${section._id}`));
+export const getKeyboard = (buttons = [], isHideReEnter = false) => {
+  const keyboardButtons = map(buttons, (button) => getButton(...button));
+  const options = { wrap: (button, i) => !(i % 3) || ['reEnterScene', 'leaveScene'].includes(button.callback_data) };
 
-  return buttons;
+  if (!isHideReEnter)
+    keyboardButtons.push(getButton('↺ Выбрать раздел', 'reEnterScene'));
+
+  keyboardButtons.push(getButton('X Выйти', 'leaveScene'));
+
+  return Markup.inlineKeyboard(keyboardButtons, options);
 };
 
 export const handleEnterScene = async (ctx, callback) => {
   const actualitiesSections = await getActualitiesSections();
-  const notEmptySections = reject(actualitiesSections, (section) => section.actualities && !section.actualities.length);
-  const keyboardButtons = map(notEmptySections, ({ _id, name }) => Markup.button.callback(name, `openSection:${_id}`));
+  const notEmptySections = reject(actualitiesSections, (section) => !section.actualities.length);
   const replyOptions = { parse_mode: 'markdown' };
 
-  if (notEmptySections.length)
-    assign(replyOptions, Markup.inlineKeyboard(keyboardButtons, { columns: 3 }));
+  if (notEmptySections.length) {
+    const keyboardButtons = map(notEmptySections, ({ _id, name }) => ([name, `openSection:${_id}`]));
+
+    assign(replyOptions, getKeyboard(keyboardButtons, true));
+  }
 
   ctx.session.sections = notEmptySections;
   ctx.session.sectionId = null;
   ctx.session.actualityId = null;
+  ctx.session.actualityMessageId = null;
 
   return callback(ctx, replyOptions);
 };
