@@ -69,7 +69,7 @@ actualityScene.use((ctx, next) => {
 });
 
 actualityScene.leave(async (ctx) => {
-  await ctx.deleteMessage(ctx.session.actualityMessageId);
+  await ctx.deleteMessage(ctx.session.actualityMessageId).catch(() => {});
   await ctx.replyWithMarkdown('`Завершаем работу с актуалочкой`');
 });
 
