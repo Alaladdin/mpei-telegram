@@ -1,5 +1,5 @@
 import each from 'lodash/each';
-import { filter } from 'lodash';
+import filter from 'lodash/filter';
 import { getFolderModulesInfo } from '../helpers';
 
 export default {

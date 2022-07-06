@@ -23,7 +23,6 @@ export default {
   async openBrowser() {
     browser = await puppeteer.launch({
       args           : ['--no-sandbox', `--window-size=${1080},${720}`],
-      headless       : config.isProd,
       defaultViewport: {
         width : 1080,
         height: 720,

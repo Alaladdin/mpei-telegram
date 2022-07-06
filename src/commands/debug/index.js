@@ -1,4 +1,4 @@
-import { map } from 'lodash';
+import map from 'lodash/map';
 import metadataFunc from './metadata';
 
 export default {

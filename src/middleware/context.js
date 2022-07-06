@@ -1,4 +1,4 @@
-import { some } from 'lodash';
+import some from 'lodash/some';
 import config from '../config';
 
 export default async (ctx) => {
