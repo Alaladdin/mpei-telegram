@@ -11,10 +11,10 @@ export default async (ctx) => {
     ctx.operationPayload = data.data || data.text;
     ctx.operation = data.data ? 'action' : 'command';
     ctx.chatId = chat.id;
-    ctx.isPrivateChat = chat.type === 'private';
     ctx.userId = data.from.id;
     ctx.username = data.from.first_name;
     ctx.isAdmin = ctx.userId === config.adminChatId;
+    ctx.isPrivateChat = chat.type === 'private';
 
     if (!ctx.isPrivateChat) {
       const chatAdministrators = await ctx.getChatAdministrators(ctx.chatId);
