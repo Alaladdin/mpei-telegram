@@ -1,14 +1,17 @@
 import { Markup } from 'telegraf';
+import config from '../config';
 
 export default {
   name       : 'a',
   description: 'Актуалочка',
-  execute    : (ctx) => {
+  execute    : (ctx, bot) => {
     const keyboard = Markup.inlineKeyboard([
-      Markup.button.webApp('Актуалочка', 'https://winx.mpei.space/actuality'),
+      Markup.button.webApp('Актуалочка', `${config.webAppUrl}actuality`),
     ]);
+    const replyOptions = { parse_mode: 'Markdown', ...keyboard };
 
-    ctx.replyWithMarkdown('`Winx systems`', keyboard)
-      .catch((err) => ctx.replyWithMarkdown(`\`${err}\``));
+    ctx.reply('`Winx systems`', replyOptions)
+      .catch(() => bot.telegram.sendMessage(config.mainChatId, '`Winx systems`', replyOptions))
+      .catch(() => {});
   },
 };

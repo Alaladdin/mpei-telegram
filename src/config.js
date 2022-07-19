@@ -14,6 +14,7 @@ export default {
   mainChatId      : +(isProd ? process.env.MAIN_CHAT_ID : process.env.ADMIN_CHAT_ID),
   adminChatId     : +process.env.ADMIN_CHAT_ID,
   serverDateFormat: 'YYYY.MM.DD',
+  webAppUrl       : 'https://winx.mpei.space/',
   mailUsername    : process.env.MAIL_USERNAME,
   mailPassword    : process.env.MAIL_PASSWORD,
 };

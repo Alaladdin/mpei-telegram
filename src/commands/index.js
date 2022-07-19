@@ -8,7 +8,7 @@ export default {
     const actions = filter(commandsInfo, 'actionNames');
 
     each(commandsInfo, (command) => {
-      bot.command(command.name, (ctx) => this.callCommand(command, ctx));
+      bot.command(command.name, (ctx) => command.execute(ctx, bot));
     });
 
     each(actions, (action) => {
@@ -16,11 +16,5 @@ export default {
         bot.action(actionName, (ctx) => action.executeAction(ctx));
       });
     });
-  },
-  callCommand(command, ctx) {
-    const message = ctx.update.message.text.toLowerCase();
-    const args = message.split(' ').slice(1);
-
-    command.execute(ctx, args);
   },
 };
