@@ -8,6 +8,7 @@ export default {
       Markup.button.webApp('Актуалочка', 'https://winx.mpei.space/actuality'),
     ]);
 
-    ctx.replyWithMarkdown('`Winx systems`', keyboard);
+    ctx.replyWithMarkdown('`Winx systems`', keyboard)
+      .catch((err) => ctx.replyWithMarkdown(`\`${err}\``));
   },
 };
