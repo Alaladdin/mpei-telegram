@@ -1,6 +1,6 @@
 {
   "name": "mpei-telegram",
-  "version": "1.11.1",
+  "version": "1.12.0",
   "description": "MPEI telegram bot",
   "main": "app.js",
   "scripts": {
@@ -20,19 +20,19 @@
   "homepage": "https://github.com/Alaladdin/mpei-telegram#readme",
   "author": "Alaladdin",
   "dependencies": {
-    "@sentry/node": "^7.5.1",
-    "@sentry/tracing": "^7.5.1",
+    "@sentry/node": "^7.7.0",
+    "@sentry/tracing": "^7.7.0",
     "axios": "^0.27.2",
     "dotenv": "^16.0.1",
     "esm": "^3.2.25",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "node-schedule": "^2.1.0",
-    "puppeteer": "^15.3.1",
+    "puppeteer": "^15.4.0",
     "telegraf": "^4.8.5"
   },
   "devDependencies": {
-    "eslint": "^8.19.0",
+    "eslint": "^8.20.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
     "nodemon": "^2.0.19"
