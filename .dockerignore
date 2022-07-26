@@ -1,6 +1,5 @@
-node_modules/
-.github
 .idea
-.eslintcache
-.tmp
+.github
+node_modules/
+tmp
 .env

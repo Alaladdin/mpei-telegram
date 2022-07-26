@@ -1,6 +1,4 @@
-node_modules/
-.env
 .idea
-pnpm-lock.yaml
-package-lock.json
+node_modules/
 tmp
+.env
