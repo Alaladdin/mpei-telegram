@@ -2,11 +2,12 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const isProd = process.env.NODE_ENV === 'production';
+const currentEnv = process.env.NODE_ENV || 'development';
+const isProd = currentEnv === 'production';
 
 export default {
   isProd,
-  currentEnv      : process.env.NODE_ENV || 'development',
+  currentEnv,
   token           : isProd ? process.env.TOKEN : process.env.TOKEN_DEV,
   authToken       : process.env.AUTH_TOKEN,
   apiUrl          : process.env.API_URL,
@@ -15,6 +16,4 @@ export default {
   adminChatId     : +process.env.ADMIN_CHAT_ID,
   serverDateFormat: 'YYYY.MM.DD',
   webAppUrl       : 'https://winx.mpei.space/',
-  mailUsername    : process.env.MAIL_USERNAME,
-  mailPassword    : process.env.MAIL_PASSWORD,
 };
