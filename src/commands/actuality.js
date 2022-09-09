@@ -11,7 +11,9 @@ export default {
     const replyOptions = { parse_mode: 'Markdown', ...keyboard };
 
     ctx.reply('`Winx systems`', replyOptions)
-      .catch(() => bot.telegram.sendMessage(config.mainChatId, '`Winx systems`', replyOptions))
-      .catch(() => {});
+      .catch(() => bot.telegram.sendMessage(ctx.userId, '`Winx systems`', replyOptions))
+      .catch(() => {
+        ctx.replyWithMarkdown('`Команда работает только в личных сообщениях`');
+      });
   },
 };
