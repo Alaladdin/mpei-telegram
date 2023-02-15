@@ -16,6 +16,6 @@ export default {
       return info.join('\n');
     }).join('\n\n');
 
-    await ctx.replyWithMarkdown(`\`${commandsInfoText}\``);
+    await ctx.replyWithMarkdownV2(`\`${commandsInfoText}\``);
   },
 };

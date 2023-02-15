@@ -2,7 +2,7 @@ import { map, memoize } from 'lodash';
 import { Markup } from 'telegraf';
 import moment from 'moment';
 import { formatDate } from '../../helpers';
-import request from '../../plugins/request';
+import api from '../../plugins/api';
 import config from '../../config';
 
 const keyboard = Markup.inlineKeyboard([
@@ -39,15 +39,15 @@ export default {
       const fullMessage = `*${title}*\n\n\`${message}\``;
 
       if (!isEdit)
-        return ctx.replyWithMarkdown(fullMessage, keyboard);
+        return ctx.replyWithMarkdownV2(fullMessage, keyboard);
 
       return ctx.editMessageText(fullMessage, { parse_mode: 'Markdown', ...keyboard })
         .catch(() => {});
     }
 
-    await ctx.replyWithMarkdown(`\`Error: ${schedule.error}\``);
+    await ctx.replyWithMarkdownV2(`\`Error: ${schedule.error}\``);
 
-    throw schedule.error;
+    return false;
   },
   getScheduleDate(isStart) {
     const rawDate = moment().add(2, 'days').add(this.offset, 'weeks');
@@ -55,11 +55,10 @@ export default {
 
     return date.format(config.serverDateFormat);
   },
-  getSchedule: ({ start, finish }) => request.get(`${config.apiUrl}/getSchedule`, { params: { start, finish } })
+  getSchedule: ({ start, finish }) => api.get(`${config.apiUrl}/getSchedule`, { params: { start, finish } })
     .then((data) => data.schedule)
     .catch((err) => err),
   formatSchedule: memoize((schedule) => {
-    const today = moment().format('DD.MM');
     const formattedSchedules = map(schedule, (i) => {
       const lesson = [];
 
@@ -74,9 +73,6 @@ export default {
 
       if (i.group)
         lesson.push(`Группа: ${i.group}`);
-
-      if (today === i.date)
-        return map(lesson, (desc) => `🧚 ${desc}`).join('\n');
 
       return lesson.join('\n');
     });

@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import moment from 'moment';
 import { filter, map, memoize } from 'lodash';
+import * as Sentry from '@sentry/node';
 
 /* eslint-disable no-param-reassign,global-require,import/no-dynamic-require */
 export const getFolderModulesInfo = memoize((folderName) => {
@@ -18,3 +19,5 @@ export const getFolderModulesInfo = memoize((folderName) => {
 /* eslint-enable no-param-reassign,global-require,import/no-dynamic-require */
 
 export const formatDate = (date, format = 'DD.MM') => moment(date).format(format);
+
+export const reportCrash = Sentry.captureException;
