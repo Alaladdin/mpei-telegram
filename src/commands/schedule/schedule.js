@@ -26,6 +26,9 @@ export default {
     this.offset += actionName === 'schedulePrevWeek' ? -1 : 1;
 
     return this.sendSchedule(ctx, true)
+      .catch((err) => {
+        ctx.replyWithMarkdownV2(`\`Error: ${err.error || err.message}\``);
+      })
       .finally(() => ctx.answerCbQuery());
   },
   async sendSchedule(ctx, isEdit = false) {
@@ -45,9 +48,7 @@ export default {
         .catch(() => {});
     }
 
-    await ctx.replyWithMarkdownV2(`\`Error: ${schedule.error}\``);
-
-    return false;
+    throw schedule;
   },
   getScheduleDate(isStart) {
     const rawDate = moment().add(2, 'days').add(this.offset, 'weeks');
@@ -56,8 +57,7 @@ export default {
     return date.format(config.serverDateFormat);
   },
   getSchedule: ({ start, finish }) => api.get(`${config.apiUrl}/getSchedule`, { params: { start, finish } })
-    .then((data) => data.schedule)
-    .catch((err) => err),
+    .then((data) => data.schedule),
   formatSchedule: memoize((schedule) => {
     const formattedSchedules = map(schedule, (i) => {
       const lesson = [];
