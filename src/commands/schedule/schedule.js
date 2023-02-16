@@ -7,13 +7,14 @@ import config from '../../config';
 
 const keyboard = Markup.inlineKeyboard([
   Markup.button.callback('сюдым', 'schedulePrevWeek'),
+  Markup.button.callback('текущая', 'scheduleCurrentWeek'),
   Markup.button.callback('тудым', 'scheduleNextWeek'),
 ]);
 
 export default {
   name       : 's',
   description: 'Расписание',
-  actionNames: ['schedulePrevWeek', 'scheduleNextWeek'],
+  actionNames: ['schedulePrevWeek', 'scheduleCurrentWeek', 'scheduleNextWeek'],
   offset     : 0,
   async execute(ctx) {
     this.offset = 0;
@@ -26,7 +27,10 @@ export default {
   async executeAction(ctx) {
     const actionName = ctx.update.callback_query.data;
 
-    this.offset += actionName === 'schedulePrevWeek' ? -1 : 1;
+    if (actionName === 'scheduleCurrentWeek')
+      this.offset = 0;
+    else
+      this.offset += actionName === 'schedulePrevWeek' ? -1 : 1;
 
     return this.sendSchedule(ctx, true)
       .catch((err) => {
