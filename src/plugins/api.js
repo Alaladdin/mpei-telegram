@@ -7,12 +7,12 @@ const api = axios.create({
 });
 
 const handleError = (err) => {
-  const { response: res, code: errorCode } = err;
-  const errorData = (res && res.data) || { error: errorCode };
+  const { response: res } = err;
+  const errorMessage = res?.data?.error || err?.message || err;
 
-  reportCrash(errorData.error);
+  reportCrash(err);
 
-  throw errorData;
+  throw errorMessage;
 };
 
 export default {

@@ -30,7 +30,7 @@ export default {
 
     return this.sendSchedule(ctx, true)
       .catch((err) => {
-        ctx.replyWithMarkdown(`\`Error: ${err?.error || err.message}\``);
+        ctx.replyWithMarkdown(`\`Error: ${err}\``);
       })
       .finally(() => ctx.answerCbQuery());
   },
