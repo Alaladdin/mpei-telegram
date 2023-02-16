@@ -1,6 +1,6 @@
 {
   "name": "mpei-telegram",
-  "version": "1.13.2",
+  "version": "1.13.3",
   "description": "MPEI telegram bot",
   "main": "app.js",
   "scripts": {
@@ -26,6 +26,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "node-schedule": "^2.1.1",
+    "systeminformation": "^5.17.9",
     "telegraf": "4.10.0"
   },
   "devDependencies": {
