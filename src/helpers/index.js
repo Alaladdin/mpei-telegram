@@ -20,4 +20,7 @@ export const getFolderModulesInfo = memoize((folderName) => {
 
 export const formatDate = (date, format = 'DD.MM') => moment(date).format(format);
 
-export const reportCrash = Sentry.captureException;
+export const reportCrash = (err) => {
+  console.error(err);
+  Sentry.captureException(err);
+};

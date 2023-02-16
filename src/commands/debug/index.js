@@ -14,6 +14,6 @@ export default {
       return message.join('\n');
     }).join('\n\n');
 
-    await ctx.replyWithMarkdownV2(debugMessage);
+    await ctx.replyWithMarkdown(debugMessage);
   },
 };

@@ -18,7 +18,10 @@ export default {
   async execute(ctx) {
     this.offset = 0;
 
-    return this.sendSchedule(ctx);
+    return this.sendSchedule(ctx)
+      .catch((err) => {
+        ctx.replyWithMarkdown(`\`Error: ${err}\``);
+      });
   },
   async executeAction(ctx) {
     const actionName = ctx.update.callback_query.data;
@@ -27,7 +30,7 @@ export default {
 
     return this.sendSchedule(ctx, true)
       .catch((err) => {
-        ctx.replyWithMarkdownV2(`\`Error: ${err.error || err.message}\``);
+        ctx.replyWithMarkdown(`\`Error: ${err?.error || err.message}\``);
       })
       .finally(() => ctx.answerCbQuery());
   },
@@ -38,11 +41,11 @@ export default {
 
     if (!schedule.error) {
       const title = `Период: ${formatDate(new Date(start))} — ${formatDate(new Date(finish))}`;
-      const message = schedule.length ? this.formatSchedule(schedule) : 'Занятий нет. Ликуйте же';
+      const message = schedule.length ? this.formatSchedule(schedule, true) : 'Занятий нет. Ликуйте же';
       const fullMessage = `*${title}*\n\n\`${message}\``;
 
       if (!isEdit)
-        return ctx.replyWithMarkdownV2(fullMessage, keyboard);
+        return ctx.replyWithMarkdown(fullMessage, keyboard);
 
       return ctx.editMessageText(fullMessage, { parse_mode: 'Markdown', ...keyboard })
         .catch(() => {});
@@ -58,11 +61,14 @@ export default {
   },
   getSchedule: ({ start, finish }) => api.get(`${config.apiUrl}/getSchedule`, { params: { start, finish } })
     .then((data) => data.schedule),
-  formatSchedule: memoize((schedule) => {
+  formatSchedule: memoize((schedule, markTodayLesson = false) => {
     const formattedSchedules = map(schedule, (i) => {
+      const today = moment().format('DD.MM');
+
       const lesson = [];
 
       lesson.push(`[${i.dayOfWeekString}] ${i.date} — ${i.disciplineAbbr}`);
+      lesson.push(`Предмет: ${i.discipline}`);
       lesson.push(`Тип: ${i.kindOfWork}`);
 
       if (i.beginLesson !== '18:55')
@@ -73,6 +79,9 @@ export default {
 
       if (i.group)
         lesson.push(`Группа: ${i.group}`);
+
+      if (markTodayLesson && today === i.date)
+        return map(lesson, (desc) => `* ${desc}`).join('\n');
 
       return lesson.join('\n');
     });

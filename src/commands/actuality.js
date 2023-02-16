@@ -13,7 +13,7 @@ export default {
     ctx.reply('`Winx systems`', replyOptions)
       .catch(() => bot.telegram.sendMessage(ctx.userId, '`Winx systems`', replyOptions))
       .catch(() => {
-        ctx.replyWithMarkdownV2('`Команда работает только в личных сообщениях`');
+        ctx.replyWithMarkdown('`Команда работает только в личных сообщениях`');
       });
   },
 };
