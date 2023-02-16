@@ -5,19 +5,30 @@ import { formatDate } from '../../helpers';
 import api from '../../plugins/api';
 import config from '../../config';
 
-const keyboard = Markup.inlineKeyboard([
-  Markup.button.callback('сюдым', 'schedulePrevWeek'),
-  Markup.button.callback('текущая', 'scheduleCurrentWeek'),
-  Markup.button.callback('тудым', 'scheduleNextWeek'),
+const getKeyboard = (isAdditionalFieldsVisible) => Markup.inlineKeyboard([
+  [
+    Markup.button.callback('сюдым', 'schedulePrevWeek'),
+    Markup.button.callback('текущая', 'scheduleCurrentWeek'),
+    Markup.button.callback('тудым', 'scheduleNextWeek')],
+  [
+    Markup.button.callback(`${isAdditionalFieldsVisible ? '[x] ' : ''}подробнее`, 'scheduleToggleFieldsVisibility'),
+  ],
 ]);
 
 export default {
   name       : 's',
   description: 'Расписание',
-  actionNames: ['schedulePrevWeek', 'scheduleCurrentWeek', 'scheduleNextWeek'],
-  offset     : 0,
+  actionNames: [
+    'schedulePrevWeek',
+    'scheduleCurrentWeek',
+    'scheduleNextWeek',
+    'scheduleToggleFieldsVisibility',
+  ],
+  offset              : 0,
+  showAdditionalFields: false,
   async execute(ctx) {
     this.offset = 0;
+    this.showAdditionalFields = false;
 
     return this.sendSchedule(ctx)
       .catch((err) => {
@@ -27,10 +38,14 @@ export default {
   async executeAction(ctx) {
     const actionName = ctx.update.callback_query.data;
 
+    if (actionName === 'scheduleToggleFieldsVisibility')
+      this.showAdditionalFields = !this.showAdditionalFields;
     if (actionName === 'scheduleCurrentWeek')
       this.offset = 0;
-    else
-      this.offset += actionName === 'schedulePrevWeek' ? -1 : 1;
+    if (actionName === 'schedulePrevWeek')
+      this.offset -= 1;
+    if (actionName === 'scheduleNextWeek')
+      this.offset += 1;
 
     return this.sendSchedule(ctx, true)
       .catch((err) => {
@@ -45,13 +60,14 @@ export default {
 
     if (!schedule.error) {
       const title = `Период: ${formatDate(new Date(start))} — ${formatDate(new Date(finish))}`;
-      const message = schedule.length ? this.formatSchedule(schedule, true) : 'Занятий нет. Ликуйте же';
+      const formatOptions = { showAdditionalFields: this.showAdditionalFields, markTodayLesson: true };
+      const message = schedule.length ? this.formatSchedule(schedule, formatOptions) : 'Занятий нет. Ликуйте же';
       const fullMessage = `*${title}*\n\n\`${message}\``;
 
       if (!isEdit)
-        return ctx.replyWithMarkdown(fullMessage, keyboard);
+        return ctx.replyWithMarkdown(fullMessage, getKeyboard());
 
-      return ctx.editMessageText(fullMessage, { parse_mode: 'Markdown', ...keyboard })
+      return ctx.editMessageText(fullMessage, { parse_mode: 'Markdown', ...getKeyboard(this.showAdditionalFields) })
         .catch(() => {});
     }
 
@@ -65,17 +81,20 @@ export default {
   },
   getSchedule: ({ start, finish }) => api.get(`${config.apiUrl}/getSchedule`, { params: { start, finish } })
     .then((data) => data.schedule),
-  formatSchedule: memoize((schedule, markTodayLesson = false) => {
+  formatSchedule: memoize((schedule, options = {}) => {
     const formattedSchedules = map(schedule, (i) => {
       const today = moment().format('DD.MM');
 
       const lesson = [];
 
       lesson.push(`[${i.dayOfWeekString}] ${i.date} — ${i.disciplineAbbr}`);
-      lesson.push(`Предмет: ${i.discipline}`);
+
+      if (options.showAdditionalFields)
+        lesson.push(`Предмет: ${i.discipline}`);
+
       lesson.push(`Тип: ${i.kindOfWork}`);
 
-      if (i.beginLesson !== '18:55')
+      if (options.showAdditionalFields || i.beginLesson !== '18:55')
         lesson.push(`Время: ${i.beginLesson} - ${i.endLesson}`);
 
       if (i.building !== '-')
@@ -84,7 +103,7 @@ export default {
       if (i.group)
         lesson.push(`Группа: ${i.group}`);
 
-      if (markTodayLesson && today === i.date)
+      if (options.markTodayLesson && today === i.date)
         return map(lesson, (desc) => `* ${desc}`).join('\n');
 
       return lesson.join('\n');
