@@ -1,27 +1,39 @@
 import { Telegraf } from 'telegraf';
+import createDebug from 'debug';
+import { chain } from 'lodash';
 import { contextMiddleware, sentryMiddleware } from './src/middleware';
 import config from './src/config';
 import commands from './src/commands';
 import cron from './src/cron';
+import { getFolderModulesInfo, reportCrash } from './src/helpers';
+import { COMMANDS_ORDER } from './src/constants';
 
+const debug = createDebug('bot:main');
 const bot = new Telegraf(config.token);
 
-bot.use(async (ctx, next) => {
-  await contextMiddleware(ctx);
-  await sentryMiddleware(ctx, next);
-});
+const init = async () => {
+  const commandsList = chain(getFolderModulesInfo('commands'))
+    .reject('hidden')
+    .map(({ name, description }) => ({ command: name, description }))
+    .orderBy(({ command }) => COMMANDS_ORDER[command] || 999)
+    .value();
 
-bot.launch()
-  .then(() => {
-    commands.init(bot);
-    cron.init(bot);
-    console.info('[BOT] has been started');
-  })
-  .catch((err) => {
-    console.error('[ERROR] Launch error:', err);
-    process.exit(0);
+  await bot.telegram.setMyCommands(commandsList);
+
+  bot.catch((err, ctx) => {
+    debug(err, ctx);
+    reportCrash(err);
   });
 
-// Graceful stop
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
+  bot.use(async (ctx, next) => {
+    await contextMiddleware(ctx);
+    await sentryMiddleware(ctx, next);
+  });
+
+  commands.init(bot);
+  cron.init(bot);
+
+  await bot.launch();
+};
+
+init().catch(reportCrash);

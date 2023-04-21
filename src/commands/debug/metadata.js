@@ -1,33 +1,45 @@
-import packageJSON from '../../../package.json';
+import { map } from 'lodash';
+import { version } from '../../../package.json';
 import config from '../../config';
+import { EMPTY_VALUE } from '../../constants';
 
-export default (ctx) => ({
-  fieldsInfo: [
-    {
-      title : 'bot',
-      fields: [
-        { title: 'version', value: packageJSON.version },
-        { title: 'mainChatId', value: config.mainChatId },
-        { title: 'adminChatId', value: config.adminChatId },
-        { title: 'operationPayload', value: ctx.operationPayload },
-        { title: 'operation', value: ctx.operation },
-        { title: 'isProd', value: config.isProd },
-      ],
-    },
-    {
-      title : 'chat',
-      fields: [
-        { title: 'id', value: ctx.chatId },
-        { title: 'isPrivateChat', value: ctx.isPrivateChat },
-      ],
-    },
-    {
-      title : 'user',
-      fields: [
-        { title: 'id', value: ctx.userId },
-        { title: 'username', value: ctx.username },
-        { title: 'isAdmin', value: ctx.isAdmin },
-      ],
-    },
-  ],
-});
+const formatField = (field) => ({ ...field, value: field.value ?? EMPTY_VALUE });
+
+export default (ctx) => {
+  const { botInfo, from, chat } = ctx;
+  const chatTitle = chat.title || ctx.fullName;
+  const fullName = [from.first_name, from.last_name].join(' ');
+
+  return {
+    fieldsInfo: [
+      {
+        title : 'bot',
+        fields: map([
+          { title: 'version', value: version },
+          { title: 'name', value: botInfo.first_name },
+          { title: 'username', value: `@${botInfo.username}` },
+          { title: 'mainChatId', value: config.mainChatId },
+          { title: 'environment', value: config.currentEnv },
+        ], formatField),
+      },
+      {
+        title : 'chat',
+        fields: map([
+          { title: 'id', value: chat.id },
+          { title: 'title', value: chatTitle },
+          { title: 'type', value: chat.type },
+        ], formatField),
+      },
+      {
+        title : 'user',
+        fields: map([
+          { title: 'id', value: from.id },
+          { title: 'username', value: from.username && `@${from.username}` },
+          { title: 'fullName', value: fullName },
+          { title: 'lang', value: from.language_code },
+          { title: 'isPremium', value: from.is_premium },
+        ], formatField),
+      },
+    ],
+  };
+};

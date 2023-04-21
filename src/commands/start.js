@@ -1,14 +1,11 @@
-import map from 'lodash/map';
-import { getFolderModulesInfo } from '../helpers';
-
 export default {
   name       : 'start',
-  description: 'Обновление списка команд',
+  description: 'Инициализация бота',
+  hidden     : true,
   async execute(ctx) {
-    const commandsInfo = getFolderModulesInfo('commands');
-    const commandsList = map(commandsInfo, ({ name, description }) => ({ command: name, description }));
+    const user = ctx.from;
+    const fullName = [user.first_name, user.last_name].join(' ');
 
-    await ctx.setMyCommands(commandsList);
-    await ctx.replyWithMarkdown(`\`Приветствую, ${ctx.username}\``);
+    await ctx.replyWithMarkdown(`\`Приветствую, ${fullName}\``);
   },
 };

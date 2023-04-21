@@ -1,12 +1,27 @@
 import '@sentry/tracing';
 import * as Sentry from '@sentry/node';
+import { keys, each } from 'lodash';
 import config from '../config';
+import { version } from '../../package.json';
 
 Sentry.init({
   dsn             : config.sentryDsn,
   tracesSampleRate: 1.0,
+  release         : version,
   environment     : config.currentEnv,
   enabled         : config.isProd,
+  beforeSend      : (e) => {
+    delete e.contexts?.os;
+    delete e.contexts?.device;
+
+    return e;
+  },
+  beforeSendTransaction: (e) => {
+    delete e.contexts?.os;
+    delete e.contexts?.device;
+
+    return e;
+  },
 });
 
 export default async (ctx, next) => {
@@ -16,12 +31,9 @@ export default async (ctx, next) => {
       name: ctx.operationPayload,
     });
 
-    Sentry.setUser({
-      username     : ctx.username,
-      chatId       : ctx.chatId,
-      userId       : ctx.userId,
-      isAdmin      : ctx.isAdmin,
-      isPrivateChat: ctx.isPrivateChat,
+    Sentry.setUser(ctx.from);
+    each(keys(ctx), (ctxKey) => {
+      Sentry.setContext(ctxKey, ctx[ctxKey]);
     });
 
     next()

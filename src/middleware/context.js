@@ -1,25 +1,12 @@
-import some from 'lodash/some';
-import config from '../config';
-
 export default async (ctx) => {
-  const { message, callback_query: callbackQuery } = ctx.update;
-  const data = message || callbackQuery;
+  let operationPayload = null;
 
-  if (data) {
-    const chat = data.message ? data.message.chat : data.chat;
+  if (ctx.updateType === 'message')
+    operationPayload = ctx.message.text;
 
-    ctx.operationPayload = data.data || data.text;
-    ctx.operation = data.data ? 'action' : 'command';
-    ctx.chatId = chat.id;
-    ctx.userId = data.from.id;
-    ctx.username = data.from.first_name;
-    ctx.isAdmin = ctx.userId === config.adminChatId;
-    ctx.isPrivateChat = chat.type === 'private';
+  if (ctx.updateType === 'callback_query')
+    operationPayload = ctx.callbackQuery.data;
 
-    if (!ctx.isPrivateChat) {
-      const chatAdministrators = await ctx.getChatAdministrators(ctx.chatId).catch(() => ([]))
-
-      ctx.isAdmin = ctx.isAdmin || some(chatAdministrators, ['user.id', ctx.userId]);
-    }
-  }
+  ctx.operation = ctx.updateType;
+  ctx.operationPayload = operationPayload;
 };
