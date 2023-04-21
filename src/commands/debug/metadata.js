@@ -7,8 +7,8 @@ const formatField = (field) => ({ ...field, value: field.value ?? EMPTY_VALUE })
 
 export default (ctx) => {
   const { botInfo, from, chat } = ctx;
-  const chatTitle = chat.title || ctx.fullName;
   const fullName = [from.first_name, from.last_name].join(' ');
+  const chatTitle = chat.title || fullName;
 
   return {
     fieldsInfo: [
