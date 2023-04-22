@@ -4,16 +4,12 @@ import config from '../config';
 export default {
   name       : 'a',
   description: 'Актуалочка',
-  execute    : (ctx, bot) => {
+  execute    : (ctx) => {
     const keyboard = Markup.inlineKeyboard([
-      Markup.button.webApp('Актуалочка', `${config.webAppUrl}actuality`),
+      // Markup.button.webApp('Актуалочка', `${config.webAppUrl}actuality`),
+      Markup.button.url('Актуалочка', `${config.webAppUrl}/actuality`),
     ]);
-    const replyOptions = { parse_mode: 'Markdown', ...keyboard };
 
-    ctx.reply('`Winx systems`', replyOptions)
-      .catch(() => bot.telegram.sendMessage(ctx.userId, '`Winx systems`', replyOptions))
-      .catch(() => {
-        ctx.replyWithMarkdown('`Команда работает только в личных сообщениях`');
-      });
+    ctx.replyWithMarkdownV2('`Winx systems`', keyboard);
   },
 };

@@ -1,19 +1,9 @@
 import { map, memoize } from 'lodash';
 import { Markup } from 'telegraf';
 import moment from 'moment';
-import { formatDate } from '../../helpers';
-import api from '../../plugins/api';
-import config from '../../config';
-
-const getKeyboard = (isAdditionalFieldsVisible) => Markup.inlineKeyboard([
-  [
-    Markup.button.callback('сюдым', 'schedulePrevWeek'),
-    Markup.button.callback('текущая', 'scheduleCurrentWeek'),
-    Markup.button.callback('тудым', 'scheduleNextWeek')],
-  [
-    Markup.button.callback(`${isAdditionalFieldsVisible ? '[x] ' : ''}подробнее`, 'scheduleToggleFieldsVisibility'),
-  ],
-]);
+import { formatDate } from '../helpers';
+import api from '../plugins/api';
+import config from '../config';
 
 export default {
   name       : 's',
@@ -40,10 +30,13 @@ export default {
 
     if (actionName === 'scheduleToggleFieldsVisibility')
       this.showAdditionalFields = !this.showAdditionalFields;
+
     if (actionName === 'scheduleCurrentWeek')
       this.offset = 0;
+
     if (actionName === 'schedulePrevWeek')
       this.offset -= 1;
+
     if (actionName === 'scheduleNextWeek')
       this.offset += 1;
 
@@ -63,11 +56,12 @@ export default {
       const formatOptions = { showAdditionalFields: this.showAdditionalFields, markTodayLesson: true };
       const message = schedule.length ? this.formatSchedule(schedule, formatOptions) : 'Занятий нет. Ликуйте же';
       const fullMessage = `*${title}*\n\n\`${message}\``;
+      const keyboard = this.getKeyboard();
 
       if (!isEdit)
-        return ctx.replyWithMarkdown(fullMessage, getKeyboard());
+        return ctx.replyWithMarkdown(fullMessage, keyboard);
 
-      return ctx.editMessageText(fullMessage, { parse_mode: 'Markdown', ...getKeyboard(this.showAdditionalFields) })
+      return ctx.editMessageText(fullMessage, { parse_mode: 'Markdown', ...keyboard })
         .catch(() => {});
     }
 
@@ -100,6 +94,9 @@ export default {
       if (i.building !== '-')
         lesson.push(`Кабинет: ${i.auditorium} (${i.building})`);
 
+      if (options.showAdditionalFields)
+        lesson.push(`Препод: ${i.lecturer}`);
+
       if (i.group)
         lesson.push(`Группа: ${i.group}`);
 
@@ -111,4 +108,19 @@ export default {
 
     return formattedSchedules.join('\n\n');
   }),
+  getKeyboard() {
+    return Markup.inlineKeyboard([
+      [
+        Markup.button.callback('сюдым', 'schedulePrevWeek'),
+        Markup.button.callback('текущая', 'scheduleCurrentWeek'),
+        Markup.button.callback('тудым', 'scheduleNextWeek'),
+      ],
+      [
+        Markup.button.callback(
+          this.showAdditionalFields ? 'менее подробно' : 'подробнее',
+          'scheduleToggleFieldsVisibility'
+        ),
+      ],
+    ]);
+  },
 };

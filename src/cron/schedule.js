@@ -10,7 +10,7 @@ export default {
       const rawSchedule = await scheduleCommand.getSchedule({ start: today, finish: today });
 
       if (rawSchedule && rawSchedule.length) {
-        const formattedSchedule = scheduleCommand.formatSchedule(rawSchedule);
+        const formattedSchedule = scheduleCommand.formatSchedule(rawSchedule, { showAdditionalFields: true });
         const message = ['Расписание на сегодня', formattedSchedule].join('\n\n');
 
         await bot.telegram.sendMessage(config.mainChatId, `\`${message}\``, { parse_mode: 'Markdown' });

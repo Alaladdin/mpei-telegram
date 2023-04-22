@@ -14,5 +14,5 @@ export default {
   sentryDsn       : env.SENTRY_DSN,
   mainChatId      : +(isProd ? env.MAIN_CHAT_ID : env.ADMIN_CHAT_ID),
   serverDateFormat: 'YYYY.MM.DD',
-  webAppUrl       : env.WEB_APP_URL || 'https://winx.mpei.space/',
+  webAppUrl       : env.WEB_APP_URL || 'https://winx.mpei.space',
 };
