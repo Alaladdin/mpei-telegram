@@ -6,7 +6,10 @@ export default {
     const eventsInfo = getFolderModulesInfo('events');
 
     each(eventsInfo, (event) => {
-      bot.on(event.name, (ctx) => event.execute(ctx, bot));
+      bot.on(event.name, (ctx, next) => {
+        event.execute(ctx, bot);
+        next();
+      });
     });
   },
 };
