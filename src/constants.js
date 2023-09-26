@@ -7,3 +7,4 @@ const COMMANDS_ORDER = {
 
 module.exports.EMPTY_VALUE = '_EMPTY_';
 module.exports.COMMANDS_ORDER = COMMANDS_ORDER;
+module.exports.RESTRICTED_USERS = [1522329530];

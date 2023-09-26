@@ -3,6 +3,7 @@ import createDebug from 'debug';
 import { chain } from 'lodash';
 import { contextMiddleware, sentryMiddleware } from './src/middleware';
 import config from './src/config';
+import events from './src/events';
 import commands from './src/commands';
 import cron from './src/cron';
 import { getFolderModulesInfo, reportCrash } from './src/helpers';
@@ -30,6 +31,7 @@ const init = async () => {
     await sentryMiddleware(ctx, next);
   });
 
+  events.init(bot);
   commands.init(bot);
   cron.init(bot);
 
