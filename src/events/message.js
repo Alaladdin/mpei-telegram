@@ -6,7 +6,7 @@ export default {
     const userId = ctx.from.id;
     const userMessage = ctx.message.text;
     const isUserRestricted = RESTRICTED_USERS.includes(userId);
-    const isMessageRestricted = userMessage.includes('dzen.ru');
+    const isMessageRestricted = userMessage.includes('dzen.ru') || userMessage.includes('clck.ru');
 
     if (isUserRestricted && isMessageRestricted) {
       ctx.deleteMessage(ctx.message.message_id);
